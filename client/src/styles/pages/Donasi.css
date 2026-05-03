@@ -1,0 +1,332 @@
+.donasi-page {
+  background: #ffffff;
+}
+
+.donasi-section {
+  padding: 68px 0 74px;
+}
+
+.donasi-section-head {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 28px;
+}
+
+.donasi-section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: rgba(22, 100, 61, 0.08);
+  border: 1px solid rgba(22, 100, 61, 0.12);
+  color: #16643d;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.donasi-section-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #103524;
+}
+
+.donasi-section-subtext {
+  margin: 16px auto 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #5b6f65;
+  max-width: 720px;
+}
+
+.donasi-state {
+  padding: 24px;
+  border-radius: 18px;
+  background: #f8fbf9;
+  border: 1px dashed #d8e4dc;
+  color: #54665d;
+  text-align: center;
+  font-weight: 600;
+}
+
+.donasi-state--error {
+  background: #fff4f4;
+  border-color: #f1caca;
+  color: #a22a2a;
+}
+
+.donasi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.donasi-card {
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  box-shadow:
+    0 14px 36px rgba(13, 36, 24, 0.06),
+    0 4px 12px rgba(13, 36, 24, 0.03);
+  padding: 22px;
+}
+
+.donasi-card__head {
+  margin-bottom: 18px;
+}
+
+.donasi-card__head h3 {
+  margin: 10px 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #103524;
+}
+
+.donasi-card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(22, 100, 61, 0.08);
+  border: 1px solid rgba(22, 100, 61, 0.12);
+  color: #16643d;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.donasi-bank-list {
+  display: grid;
+  gap: 12px;
+}
+
+.donasi-bank-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf3ef;
+}
+
+.donasi-bank-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.donasi-bank-row span {
+  font-size: 0.9rem;
+  color: #6c8377;
+  font-weight: 700;
+}
+
+.donasi-bank-row strong {
+  font-size: 0.96rem;
+  color: #173628;
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+.donasi-qris-section {
+  margin-top: 22px;
+}
+
+.donasi-qris-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  box-shadow:
+    0 14px 36px rgba(13, 36, 24, 0.06),
+    0 4px 12px rgba(13, 36, 24, 0.03);
+}
+
+.donasi-qris-card__content h3 {
+  margin: 12px 0 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #103524;
+  line-height: 1.15;
+}
+
+.donasi-qris-note {
+  margin: 14px 0 0;
+  font-size: 0.96rem;
+  line-height: 1.8;
+  color: #596e64;
+}
+
+.donasi-qris-media {
+  display: flex;
+  justify-content: center;
+}
+
+.donasi-qris-image {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  box-shadow: 0 10px 26px rgba(13, 36, 24, 0.08);
+}
+
+.donasi-info-card {
+  margin-top: 22px;
+  padding: 22px;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  box-shadow:
+    0 14px 36px rgba(13, 36, 24, 0.06),
+    0 4px 12px rgba(13, 36, 24, 0.03);
+}
+
+.donasi-info-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #103524;
+}
+
+.donasi-info-text {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.8;
+  color: #5a6f65;
+}
+
+.donasi-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--masjid-green);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.donasi-confirm-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(19, 111, 65, 0.18);
+}
+
+/* Highlight rekening */
+.donasi-bank-row.highlight {
+  background: rgba(19, 111, 65, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+/* Hover card */
+.donasi-card {
+  transition: all 0.25s ease;
+}
+
+.donasi-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 46px rgba(13, 36, 24, 0.1),
+    0 6px 16px rgba(13, 36, 24, 0.05);
+}
+
+/* QRIS fokus */
+.donasi-qris-card {
+  align-items: center;
+}
+
+.donasi-qris-image {
+  transition: transform 0.3s ease;
+}
+
+.donasi-qris-image:hover {
+  transform: scale(1.03);
+}
+
+/* CTA */
+.donasi-cta {
+  margin-top: 24px;
+}
+
+.donasi-cta-card {
+  text-align: center;
+  padding: 26px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f8fbf9, #ffffff);
+  border: 1px solid rgba(17, 57, 35, 0.08);
+}
+
+.donasi-cta-card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #103524;
+}
+
+.donasi-cta-card p {
+  margin: 10px 0 0;
+  color: #5a6f65;
+}
+
+@media (max-width: 900px) {
+  .donasi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .donasi-qris-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .donasi-section {
+    padding: 48px 0 56px;
+  }
+
+  .donasi-section-title {
+    font-size: 1.7rem;
+    line-height: 1.12;
+  }
+
+  .donasi-section-subtext {
+    margin-top: 12px;
+    font-size: 0.92rem;
+    line-height: 1.68;
+  }
+
+  .donasi-card,
+  .donasi-qris-card,
+  .donasi-info-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .donasi-bank-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .donasi-section {
+    padding: 40px 0 46px;
+  }
+
+  .donasi-section-title {
+    font-size: 1.5rem;
+  }
+}

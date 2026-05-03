@@ -1,0 +1,357 @@
+.jadwal-public-page {
+  background: linear-gradient(180deg, #f7faf8 0%, #f3f6f4 100%);
+  min-height: 100vh;
+  color: #163126;
+}
+
+/* ==========================================
+   SUMMARY STRIP
+========================================== */
+
+.jadwal-public-summary {
+  padding: 18px 0 8px;
+}
+
+.jadwal-public-summary__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.jadwal-public-summary__item {
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(18, 66, 42, 0.08);
+  box-shadow: 0 14px 40px rgba(21, 50, 36, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.jadwal-public-summary__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6d8578;
+}
+
+.jadwal-public-summary__item strong {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #173628;
+}
+
+/* ==========================================
+   CONTENT
+========================================== */
+
+.jadwal-public-content {
+  padding: 12px 0 80px;
+}
+
+.jadwal-public-card {
+  padding: 32px;
+  border-radius: 28px;
+  background: #ffffff;
+  border: 1px solid rgba(20, 59, 39, 0.07);
+  box-shadow:
+    0 24px 70px rgba(16, 40, 28, 0.08),
+    0 4px 14px rgba(16, 40, 28, 0.04);
+}
+
+.jadwal-public-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.jadwal-public-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  background: rgba(22, 100, 61, 0.08);
+  color: #16643d;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(22, 100, 61, 0.12);
+}
+
+.jadwal-public-card__head h2 {
+  margin: 0 0 8px;
+  font-size: 1.68rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #103524;
+}
+
+.jadwal-public-card__head p {
+  margin: 0;
+  max-width: 760px;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #597065;
+}
+
+/* ==========================================
+   TABLE
+========================================== */
+
+.jadwal-public-table-wrap {
+  overflow-x: auto;
+  border-radius: 22px;
+  border: 1px solid #e4ece7;
+}
+
+.jadwal-public-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.jadwal-public-table thead th {
+  padding: 18px 20px;
+  text-align: left;
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #16643d 0%, #1d7b4a 100%);
+}
+
+.jadwal-public-table tbody td {
+  padding: 20px;
+  font-size: 1rem;
+  color: #243e32;
+  border-bottom: 1px solid #edf3ef;
+}
+
+.jadwal-public-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.jadwal-public-table tbody tr:hover {
+  background: #f8fbf9;
+}
+
+.jadwal-public-table__name {
+  font-weight: 700;
+  color: #153628;
+}
+
+.jadwal-public-table__name-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jadwal-public-table__name-inner i {
+  color: #5f7c6d;
+  font-size: 1rem;
+}
+
+.jadwal-public-table__time {
+  font-weight: 700;
+  color: #173628;
+}
+
+.jadwal-public-iqamah {
+  display: inline-flex;
+  min-width: 78px;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  color: #16643d;
+  background: rgba(22, 100, 61, 0.08);
+  border: 1px solid rgba(22, 100, 61, 0.10);
+}
+
+.jadwal-public-iqamah.is-empty {
+  color: #7b8d84;
+  background: #f5f7f6;
+  border-color: #e6ece8;
+}
+
+/* ==========================================
+   STATE
+========================================== */
+
+.jadwal-public-state {
+  padding: 36px 22px;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #345245;
+  background: #f8fbf9;
+  border: 1px dashed #d9e5dd;
+}
+
+.jadwal-public-state--error {
+  color: #8a2f2f;
+  background: #fff5f5;
+  border-color: #f1d0d0;
+}
+
+/* ==========================================
+   MOBILE LIST
+========================================== */
+
+.jadwal-public-mobile-list {
+  display: none;
+}
+
+.jadwal-public-mobile-item {
+  padding: 18px;
+  border-radius: 18px;
+  background: #f9fbfa;
+  border: 1px solid #e6eee9;
+}
+
+.jadwal-public-mobile-item__top {
+  margin-bottom: 14px;
+}
+
+.jadwal-public-mobile-item__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jadwal-public-mobile-item__title i {
+  color: #5f7c6d;
+  font-size: 0.95rem;
+}
+
+.jadwal-public-mobile-item__top h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: #163628;
+}
+
+.jadwal-public-mobile-item__times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.jadwal-public-mobile-item__times span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #6c8377;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.jadwal-public-mobile-item__times strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #173628;
+  background: #ffffff;
+  border: 1px solid #e5ece7;
+}
+
+.jadwal-public-mobile-item__empty {
+  color: #85948d !important;
+  background: #f4f7f5 !important;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .jadwal-public-summary__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jadwal-public-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .jadwal-public-summary {
+    padding: 14px 0 6px;
+  }
+
+  .jadwal-public-content {
+    padding: 10px 0 56px;
+  }
+
+  .jadwal-public-card {
+    padding: 20px;
+  }
+
+  .jadwal-public-card__head {
+    margin-bottom: 18px;
+  }
+
+  .jadwal-public-card__head h2 {
+    font-size: 1.35rem;
+  }
+
+  .jadwal-public-card__head p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .jadwal-public-table-wrap {
+    display: none;
+  }
+
+  .jadwal-public-mobile-list {
+    display: grid;
+    gap: 14px;
+  }
+
+  .jadwal-public-summary__item {
+    padding: 16px 16px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .jadwal-public-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .jadwal-public-card__eyebrow {
+    margin-bottom: 10px;
+    font-size: 0.68rem;
+  }
+
+  .jadwal-public-card__head h2 {
+    font-size: 1.22rem;
+  }
+
+  .jadwal-public-mobile-item {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .jadwal-public-mobile-item__top h3 {
+    font-size: 1rem;
+  }
+
+  .jadwal-public-mobile-item__times strong {
+    font-size: 0.96rem;
+  }
+}

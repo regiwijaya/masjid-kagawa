@@ -1,0 +1,186 @@
+:root {
+  --btn-radius-pill: 999px;
+  --btn-radius-soft: 14px;
+
+  --btn-green: #136f41;
+  --btn-green-hover: #0f5c36;
+  --btn-gold: #d4af37;
+  --btn-gold-hover: #bf9b2f;
+  --btn-white: #ffffff;
+}
+
+/* =======================================
+   BASE BUTTON
+======================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--btn-radius-soft);
+  cursor: pointer;
+  text-decoration: none !important;
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    opacity 0.22s ease;
+  font-size: 0.94rem;
+  text-align: center;
+  border: none;
+  min-height: 46px;
+  white-space: nowrap;
+}
+
+/* =======================================
+   PRIMARY GREEN
+======================================= */
+.btn-green {
+  background-color: var(--btn-green);
+  color: var(--btn-white);
+  box-shadow: 0 8px 22px rgba(19, 111, 65, 0.20);
+}
+
+.btn-green:hover {
+  background-color: var(--btn-green-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(19, 111, 65, 0.24);
+}
+
+/* =======================================
+   PRIMARY GOLD
+======================================= */
+.btn-gold {
+  background: linear-gradient(135deg, #d9b54a 0%, #c89e28 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(201, 158, 40, 0.24);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #cfa83b 0%, #b98f1e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(201, 158, 40, 0.28);
+}
+
+/* =======================================
+   OUTLINE GREEN
+======================================= */
+.btn-outline-green {
+  background: transparent;
+  border: 1.5px solid var(--btn-green);
+  color: var(--btn-green);
+}
+
+.btn-outline-green:hover {
+  background: var(--btn-green);
+  color: var(--btn-white);
+}
+
+/* =======================================
+   OUTLINE WHITE
+======================================= */
+.btn-outline-white {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  color: var(--btn-white);
+  backdrop-filter: blur(8px);
+}
+
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+/* =======================================
+   HERO BUTTON MODIFIERS
+======================================= */
+.btn-hero-primary,
+.btn-hero-secondary {
+  min-width: 190px;
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* =======================================
+   HOME CTA
+======================================= */
+.btn-home-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 28px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: white !important;
+  background: linear-gradient(135deg, #136f41 0%, #1b7a4a 100%);
+  text-decoration: none;
+  box-shadow: 0 12px 30px rgba(19, 111, 65, 0.24);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.btn-home-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(19, 111, 65, 0.28);
+}
+
+/* =======================================
+   FILTER BUTTON
+======================================= */
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 111, 65, 0.18);
+  background: white;
+  color: var(--btn-green);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.filter-btn:hover {
+  background-color: rgba(19, 111, 65, 0.08);
+}
+
+.filter-btn-active {
+  background-color: var(--btn-green);
+  color: white;
+  border-color: var(--btn-green);
+}
+
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 0.92rem;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 100%;
+    min-width: 0;
+    max-width: 260px;
+    padding: 12px 18px;
+    font-size: 0.88rem;
+  }
+
+  .btn-home-cta {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 0.94rem;
+  }
+
+  .filter-btn {
+    font-size: 0.78rem;
+  }
+}

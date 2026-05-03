@@ -1,0 +1,284 @@
+/* ==========================================
+   BASE (TIDAK DIUBAH)
+========================================== */
+
+.artikel-page {
+  background: #ffffff;
+}
+
+.artikel-section {
+  padding: 68px 0 74px;
+}
+
+.artikel-head {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 28px;
+}
+
+.artikel-head__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: rgba(22, 100, 61, 0.08);
+  border: 1px solid rgba(22, 100, 61, 0.12);
+  color: #16643d;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.artikel-head__title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #103524;
+}
+
+.artikel-head__subtext {
+  margin: 16px auto 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #5b6f65;
+  max-width: 720px;
+}
+
+/* ==========================================
+   FILTER (UPGRADE TANPA MERUSAK)
+========================================== */
+
+.artikel-filter {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.artikel-filter__btn {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 111, 65, 0.16);
+  background: #fff;
+  color: #136f41;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.artikel-filter__btn:hover {
+  transform: translateY(-1px);
+  background: rgba(19, 111, 65, 0.08);
+}
+
+.artikel-filter__btn.is-active {
+  background: #136f41;
+  color: #fff;
+  border-color: #136f41;
+  box-shadow: 0 8px 18px rgba(19, 111, 65, 0.18);
+}
+
+/* ==========================================
+   STATE (TIDAK DIUBAH)
+========================================== */
+
+.artikel-state {
+  padding: 24px;
+  border-radius: 18px;
+  background: #f8fbf9;
+  border: 1px dashed #d8e4dc;
+  color: #54665d;
+  text-align: center;
+  font-weight: 600;
+}
+
+.artikel-state--error {
+  background: #fff4f4;
+  border-color: #f1caca;
+  color: #a22a2a;
+}
+
+/* ==========================================
+   GRID (TIDAK DIUBAH)
+========================================== */
+
+.artikel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+/* ==========================================
+   CARD (UPGRADE HALUS)
+========================================== */
+
+.artikel-card {
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  background: #fff;
+  box-shadow:
+    0 14px 36px rgba(13, 36, 24, 0.06),
+    0 4px 12px rgba(13, 36, 24, 0.03);
+  transition: all 0.25s ease;
+}
+
+.artikel-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 46px rgba(13, 36, 24, 0.1),
+    0 6px 16px rgba(13, 36, 24, 0.05);
+}
+
+/* IMAGE ZOOM (AMAN) */
+
+.artikel-card__media {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #edf3ef;
+}
+
+.artikel-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.artikel-card:hover .artikel-card__media img {
+  transform: scale(1.05);
+}
+
+/* ==========================================
+   BODY (TIDAK DIUBAH)
+========================================== */
+
+.artikel-card__body {
+  padding: 16px;
+}
+
+.artikel-card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.artikel-card__badge {
+  background: rgba(19, 111, 65, 0.1);
+  color: #136f41;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.artikel-card__date {
+  color: #72857b;
+  font-size: 0.84rem;
+}
+
+.artikel-card__title {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  line-height: 1.35;
+  font-weight: 900;
+}
+
+.artikel-card__title a {
+  color: #173628;
+  text-decoration: none;
+}
+
+.artikel-card__title a:hover {
+  color: #136f41;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.artikel-card__excerpt {
+  margin: 0;
+  font-size: 0.94rem;
+  color: #61766b;
+  line-height: 1.7;
+}
+
+.artikel-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.artikel-card__author {
+  font-size: 0.84rem;
+  color: #6f8178;
+}
+
+.artikel-card__link {
+  color: #136f41;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* ==========================================
+   RESPONSIVE (DITAMBAH MOBILE SCROLL FILTER)
+========================================== */
+
+@media (max-width: 1100px) {
+  .artikel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .artikel-section {
+    padding: 48px 0 56px;
+  }
+
+  .artikel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .artikel-head__title {
+    font-size: 1.7rem;
+  }
+
+  .artikel-head__subtext {
+    font-size: 0.92rem;
+    line-height: 1.68;
+  }
+
+  /* SCROLLABLE FILTER */
+  .artikel-filter {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -16px 24px;
+    padding: 0 16px 8px;
+  }
+
+  .artikel-filter::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .artikel-filter::-webkit-scrollbar-thumb {
+    background: rgba(19, 111, 65, 0.2);
+    border-radius: 999px;
+  }
+
+  .artikel-filter__btn {
+    white-space: nowrap;
+  }
+}

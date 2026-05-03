@@ -1,0 +1,271 @@
+/* =========================
+   GLOBAL RESET + LAYOUT SAFETY
+========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #ffffff;
+  color: #213547;
+  line-height: 1.5;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: clip;
+}
+
+img,
+picture,
+video,
+canvas,
+svg,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.92;
+}
+
+/* Semua child flex/grid boleh mengecil */
+* {
+  min-width: 0;
+}
+
+/* =========================
+   DESIGN TOKENS
+========================= */
+
+:root {
+  --masjid-green: #136f41;
+  --masjid-green-dark: #0f5b35;
+  --masjid-green-light: rgba(19, 111, 65, 0.10);
+  --masjid-gold: #d4af37;
+
+  --site-max-width: 1180px;
+  --site-gutter-desktop: 24px;
+  --site-gutter-tablet: 20px;
+  --site-gutter-mobile: 14px;
+
+  --site-header-height: 74px;
+
+  --text-main: #173628;
+  --text-soft: #61766b;
+  --border-soft: rgba(17, 57, 35, 0.08);
+  --surface-soft: #f7faf8;
+}
+
+/* =========================
+   GLOBAL SHELL
+========================= */
+
+.site-shell {
+  width: min(
+    var(--site-max-width),
+    calc(100% - (var(--site-gutter-desktop) * 2))
+  );
+  margin-inline: auto;
+}
+
+@media (max-width: 991px) {
+  .site-shell {
+    width: min(
+      var(--site-max-width),
+      calc(100% - (var(--site-gutter-tablet) * 2))
+    );
+  }
+}
+
+@media (max-width: 640px) {
+  .site-shell {
+    width: min(
+      var(--site-max-width),
+      calc(100% - (var(--site-gutter-mobile) * 2))
+    );
+  }
+}
+
+/* =========================
+   THEME UTILITIES
+========================= */
+
+.bg-masjid {
+  background-color: var(--masjid-green) !important;
+}
+
+.text-masjid {
+  color: var(--masjid-green) !important;
+}
+
+.bg-gold {
+  background-color: var(--masjid-gold) !important;
+}
+
+.text-gold {
+  color: var(--masjid-gold) !important;
+}
+
+.card-masjid {
+  background-color: #eaf7ec !important;
+  border-radius: 10px;
+  border: none;
+}
+
+.center {
+  text-align: center;
+}
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+/* =========================
+   LEGACY HELPERS
+========================= */
+
+.footer {
+  background-color: #0f4e2d;
+  color: #ffffff;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.footer-link:hover {
+  color: #d4af37;
+  padding-left: 3px;
+}
+
+.footer i {
+  color: #d4af37;
+}
+
+.footer-dark a.footer-link {
+  color: #ffffff;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 6px;
+  transition: 0.2s;
+}
+
+.footer-dark a.footer-link:hover {
+  color: #d4af37;
+  padding-left: 4px;
+}
+
+.social-icon i {
+  font-size: 1.4rem;
+  color: #d4af37;
+  transition: 0.2s;
+}
+
+.social-icon:hover i {
+  color: white;
+  transform: scale(1.15);
+}
+
+.badge-box {
+  background-color: #e8f5ec;
+  color: #136f41;
+  border: 1px solid #d4af37;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  font-weight: 600;
+}
+
+/* =========================
+   BACKGROUND PATTERN
+========================= */
+
+.bg-islamic-pattern {
+  background-image: url("/pattern.svg");
+  background-size: 180px;
+  background-repeat: repeat;
+  background-position: center;
+  opacity: 0.35;
+}
+
+.section-pattern {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-pattern::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/pattern.svg");
+  background-repeat: repeat;
+  background-size: 160px;
+  opacity: 0.18;
+  z-index: 0;
+}
+
+.section-pattern > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================
+   SAFE HOVER
+========================= */
+
+.activity-card:hover {
+  transform: translateY(-4px);
+}
+
+.announcement-card:hover {
+  transform: translateY(-4px);
+}

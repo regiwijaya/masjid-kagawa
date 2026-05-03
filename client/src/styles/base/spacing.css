@@ -1,0 +1,49 @@
+/* SECTION SPACING */
+.section {
+  padding-top: var(--space-10);
+  padding-bottom: var(--space-10);
+}
+
+.section-sm {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-7);
+}
+
+.section-lg {
+  padding-top: var(--space-11);
+  padding-bottom: var(--space-11);
+}
+
+/* CARD SPACING */
+.card-padding {
+  padding: var(--space-6);
+}
+
+/* GRID GAP UTILS */
+.gap-sm { gap: var(--space-3); }
+.gap-md { gap: var(--space-5); }
+.gap-lg { gap: var(--space-7); }
+
+/* MARGIN UTILS */
+.mt-section { margin-top: var(--space-10); }
+.mb-section { margin-bottom: var(--space-10); }
+
+/* POLISH HELPERS */
+.stack-sm > * + * { margin-top: 10px; }
+.stack-md > * + * { margin-top: 16px; }
+.stack-lg > * + * { margin-top: 24px; }
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  .section-lg {
+    padding-top: var(--space-9);
+    padding-bottom: var(--space-9);
+  }
+
+  .mt-section { margin-top: var(--space-8); }
+  .mb-section { margin-bottom: var(--space-8); }
+}

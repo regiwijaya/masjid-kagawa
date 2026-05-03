@@ -1,0 +1,114 @@
+:root {
+  --font-primary: "Inter", sans-serif;
+
+  --h1-size: 2.8rem;
+  --h2-size: 2.2rem;
+  --h3-size: 1.55rem;
+  --h4-size: 1.25rem;
+  --h5-size: 1.08rem;
+  --h6-size: 1rem;
+
+  --body-lg: 1.12rem;
+  --body-md: 1rem;
+  --body-sm: 0.92rem;
+
+  --fw-bold: 800;
+  --fw-semibold: 700;
+  --fw-medium: 500;
+  --fw-regular: 400;
+
+  --lh-heading: 1.15;
+  --lh-body: 1.65;
+
+  --green-primary: #136f41;
+  --text-dark: #173628;
+  --text-muted: #61766b;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--body-md);
+  line-height: var(--lh-body);
+  color: var(--text-dark);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  margin-bottom: 0.75rem;
+  color: var(--green-primary);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--h1-size); }
+h2 { font-size: var(--h2-size); }
+h3 { font-size: var(--h3-size); }
+h4 { font-size: var(--h4-size); }
+h5 { font-size: var(--h5-size); }
+h6 { font-size: var(--h6-size); }
+
+.text-white-heading {
+  color: #fff !important;
+  text-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.body-lg { font-size: var(--body-lg); }
+.body-sm { font-size: var(--body-sm); }
+.body-muted { color: var(--text-muted); }
+
+.lead-text {
+  font-size: 1.18rem;
+  font-weight: var(--fw-medium);
+  line-height: 1.55;
+}
+
+.section-title {
+  font-size: var(--h2-size);
+  font-weight: var(--fw-bold);
+  text-align: center;
+  margin-bottom: 1.4rem;
+  color: var(--green-primary);
+}
+
+.paragraph {
+  font-size: var(--body-md);
+  line-height: 1.72;
+  margin-bottom: 1rem;
+}
+
+.mb-xxs { margin-bottom: 4px; }
+.mb-xs  { margin-bottom: 8px; }
+.mb-sm  { margin-bottom: 12px; }
+.mb-md  { margin-bottom: 18px; }
+.mb-lg  { margin-bottom: 28px; }
+.mb-xl  { margin-bottom: 40px; }
+
+@media (max-width: 768px) {
+  :root {
+    --h1-size: 2rem;
+    --h2-size: 1.56rem;
+    --h3-size: 1.24rem;
+    --h4-size: 1.08rem;
+    --body-lg: 0.98rem;
+    --body-md: 0.92rem;
+    --body-sm: 0.84rem;
+  }
+
+  .lead-text {
+    font-size: 0.98rem;
+  }
+
+  .section-title {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --h1-size: 1.82rem;
+    --h2-size: 1.42rem;
+    --h3-size: 1.14rem;
+    --body-md: 0.9rem;
+    --body-sm: 0.82rem;
+  }
+}

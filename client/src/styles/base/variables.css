@@ -1,0 +1,88 @@
+/* =========================================
+   GLOBAL THEME VARIABLES — MASJID KAGAWA
+========================================= */
+
+:root {
+  /* brand */
+  --green-primary: #136f41;
+  --green-primary-dark: #0f5a35;
+  --green-primary-light: #e7f4ed;
+
+  --green-text: #145c38;
+  --green-muted: #5d8c74;
+
+  --gold-accent: #ffe680;
+  --gold-dark: #d4bf63;
+
+  --neutral-100: #ffffff;
+  --neutral-200: #f8f9f8;
+  --neutral-300: #ececec;
+  --neutral-400: #cccccc;
+  --neutral-500: #777777;
+  --neutral-700: #444444;
+  --neutral-900: #1d1d1d;
+
+  /* alias tokens for component consistency */
+  --masjid-green: #136f41;
+  --masjid-green-dark: #0f5a35;
+  --masjid-green-light: rgba(19, 111, 65, 0.10);
+  --masjid-gold: #d4af37;
+
+  --text-main: #173628;
+  --text-soft: #61766b;
+  --border-soft: rgba(17, 57, 35, 0.08);
+  --surface-soft: #f7faf8;
+
+  /* glass / overlay */
+  --green-glass: rgba(19, 111, 65, 0.35);
+  --gold-glass: rgba(255, 230, 128, 0.18);
+  --dark-glass: rgba(0, 0, 0, 0.35);
+
+  /* typography */
+  --font-main: "Inter", "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --font-arabic: "Amiri", "Scheherazade", serif;
+
+  --fs-sm: 0.85rem;
+  --fs-base: 1rem;
+  --fs-md: 1.15rem;
+  --fs-lg: 1.4rem;
+  --fs-xl: 2rem;
+  --fs-xxl: 3rem;
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+
+  /* radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+
+  /* shadows */
+  --shadow-soft: 0 3px 10px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.14);
+  --shadow-lg: 0 10px 26px rgba(0, 0, 0, 0.22);
+  --shadow-glass: 0 8px 28px rgba(0, 0, 0, 0.26);
+
+  /* layout */
+  --max-width: 1250px;
+  --section-padding: 70px;
+
+  /* z-index */
+  --z-base: 1;
+  --z-dropdown: 1000;
+  --z-navbar: 1100;
+  --z-menu: 1200;
+  --z-overlay: 1400;
+}

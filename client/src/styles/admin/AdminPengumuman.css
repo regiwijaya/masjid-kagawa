@@ -1,0 +1,462 @@
+/* ==========================================================
+   ADMIN PENGUMUMAN — CLEAN FINAL
+========================================================== */
+
+.admin-pengumuman-page {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-pengumuman-page .admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.admin-pengumuman-page h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  color: #0f172a;
+}
+
+.admin-pengumuman-page .admin-muted {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.64);
+}
+
+/* NOTICE */
+
+.admin-pengumuman__notice {
+  margin: 0 0 18px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.admin-pengumuman__notice--error {
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  background: rgba(220, 38, 38, 0.06);
+  color: #b91c1c;
+}
+
+.admin-pengumuman__notice--success {
+  border: 1px solid rgba(22, 163, 74, 0.22);
+  background: rgba(22, 163, 74, 0.08);
+  color: #166534;
+}
+
+/* GRID */
+
+.admin-pengumuman__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(430px, 540px) minmax(420px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* CARD */
+
+.admin-pengumuman-page .admin-card {
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.06);
+  overflow: hidden;
+}
+
+.admin-pengumuman-page .admin-card-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+}
+
+.admin-pengumuman-page .admin-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.admin-pengumuman-page .admin-card-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.admin-pengumuman-page .admin-card-body {
+  padding: 18px;
+}
+
+/* FORM */
+
+.admin-pengumuman__form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-pengumuman__form label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.admin-pengumuman__form input,
+.admin-pengumuman__form textarea,
+.admin-pengumuman__form select {
+  width: 100%;
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  border-radius: 13px;
+  padding: 12px 13px;
+  font-size: 14px;
+  font-weight: 650;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.admin-pengumuman__form textarea {
+  resize: vertical;
+  min-height: 126px;
+  line-height: 1.55;
+}
+
+.admin-pengumuman__form input:focus,
+.admin-pengumuman__form textarea:focus,
+.admin-pengumuman__form select:focus {
+  border-color: rgba(37, 99, 235, 0.52);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.11);
+}
+
+.admin-pengumuman__form .hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.58);
+}
+
+.admin-pengumuman__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 14px;
+}
+
+/* CHECKBOX */
+
+.admin-pengumuman__checklist {
+  display: grid;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.admin-checkbox {
+  display: inline-flex !important;
+  align-items: center;
+  grid-template-columns: unset !important;
+  gap: 10px !important;
+  font-size: 13px;
+  font-weight: 900;
+  color: #123b26;
+  user-select: none;
+}
+
+.admin-checkbox input {
+  width: 18px !important;
+  height: 18px !important;
+  accent-color: #136f41;
+  margin: 0;
+}
+
+/* BUTTONS */
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.admin-pengumuman-page .admin-btn {
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.admin-pengumuman-page .admin-btn:hover {
+  border-color: rgba(2, 6, 23, 0.18);
+  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.08);
+  transform: translateY(-1px);
+}
+
+.admin-pengumuman-page .admin-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-pengumuman-page .admin-btn-primary {
+  border-color: rgba(37, 99, 235, 0.2);
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.96), #2563eb);
+  color: #ffffff;
+}
+
+.admin-pengumuman-page .admin-btn-primary:hover {
+  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.24);
+}
+
+.admin-pengumuman-page .admin-btn-ghost {
+  background: rgba(15, 23, 42, 0.03);
+  border-color: rgba(15, 23, 42, 0.09);
+}
+
+.admin-pengumuman-page .admin-btn-danger {
+  border-color: rgba(220, 38, 38, 0.2);
+  background: rgba(220, 38, 38, 0.06);
+  color: #b91c1c;
+}
+
+/* LIST TOOLBAR */
+
+.admin-list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.admin-list-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-list-controls input,
+.admin-list-controls select {
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  border-radius: 11px;
+  padding: 9px 11px;
+  font-size: 13px;
+  font-weight: 750;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+}
+
+.admin-list-controls input {
+  width: 180px;
+}
+
+.admin-list-controls input:focus,
+.admin-list-controls select:focus {
+  border-color: rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* LIST */
+
+.admin-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-list-item {
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 13px;
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+
+.admin-list-item:hover {
+  border-color: rgba(2, 6, 23, 0.14);
+  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.08);
+  transform: translateY(-1px);
+}
+
+.admin-item-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+}
+
+.admin-item-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  background: #f1f5f9;
+}
+
+.admin-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* fallback kalau nanti pakai class thumb */
+.thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+}
+
+.admin-item-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-item-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 950;
+  color: #0f172a;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.admin-item-meta {
+  margin-top: 9px;
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(2, 6, 23, 0.1);
+  background: rgba(15, 23, 42, 0.03);
+  font-size: 11.5px;
+  color: rgba(15, 23, 42, 0.78);
+  font-weight: 900;
+}
+
+.admin-pill--status.is-published {
+  background: #eaf7ee;
+  border-color: rgba(22, 100, 61, 0.14);
+  color: #16643d;
+}
+
+.admin-pill--status.is-draft {
+  background: #f2f4f3;
+  border-color: rgba(100, 116, 139, 0.12);
+  color: #64748b;
+}
+
+.admin-pill--featured {
+  background: #fff2ad;
+  border-color: #f1df8c;
+  color: #6a5504;
+}
+
+.admin-item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-item-actions .admin-btn {
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+/* IMAGE PREVIEW COMPAT */
+
+.admin-image-preview {
+  margin-top: 10px;
+}
+
+.admin-image-preview img {
+  width: 100%;
+  max-width: 280px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  display: block;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1180px) {
+  .admin-pengumuman__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-list-toolbar {
+    flex-direction: column;
+  }
+
+  .admin-list-controls {
+    width: 100%;
+  }
+
+  .admin-list-controls input,
+  .admin-list-controls select {
+    width: 100%;
+  }
+
+  .admin-pengumuman__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-pengumuman-page h2 {
+    font-size: 20px;
+  }
+
+  .admin-pengumuman-page .admin-card-body {
+    padding: 14px;
+  }
+
+  .admin-actions {
+    flex-direction: column;
+  }
+
+  .admin-actions .admin-btn {
+    width: 100%;
+  }
+
+  .admin-item-actions {
+    width: 100%;
+  }
+
+  .admin-item-actions .admin-btn {
+    flex: 1;
+  }
+}

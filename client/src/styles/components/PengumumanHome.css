@@ -1,0 +1,159 @@
+.pengumuman-section {
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.pengumuman-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.pengumuman-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: rgba(22, 100, 61, 0.08);
+  border: 1px solid rgba(22, 100, 61, 0.12);
+  color: #16643d;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pengumuman-header .section-title {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #103524;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+}
+
+.pengumuman-more-link {
+  flex-shrink: 0;
+  color: var(--masjid-green);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pengumuman-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.pengumuman-list {
+  border-top: 1px solid #e5ece7;
+}
+
+.pengumuman-list--news {
+  display: grid;
+}
+
+.pengumuman-item {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eef3f0;
+}
+
+.pengumuman-item--link {
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+
+.pengumuman-item--link:hover {
+  background: rgba(22, 100, 61, 0.02);
+}
+
+.pengumuman-date {
+  color: var(--masjid-green);
+  font-weight: 700;
+  min-width: 0;
+  font-size: 0.9rem;
+}
+
+.pengumuman-title {
+  color: #233d31;
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.55;
+  min-width: 0;
+}
+
+.pengumuman-category {
+  background: #f3f7f4;
+  color: #466257;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid #e3ebe6;
+}
+
+.pengumuman-state {
+  padding: 18px;
+  border-radius: 16px;
+  background: #f8fbf9;
+  border: 1px dashed #d8e4dc;
+  color: #586961;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pengumuman-state--error {
+  background: #fff4f4;
+  border-color: #f1caca;
+  color: #a22a2a;
+}
+
+.pengumuman-button-wrapper {
+  text-align: right;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .pengumuman-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pengumuman-header .section-title {
+    font-size: 1.22rem;
+  }
+
+  .pengumuman-item {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .pengumuman-date {
+    font-size: 0.84rem;
+  }
+
+  .pengumuman-title {
+    font-size: 0.92rem;
+  }
+
+  .pengumuman-category {
+    font-size: 0.72rem;
+  }
+
+  .pengumuman-button-wrapper {
+    text-align: left;
+  }
+}
