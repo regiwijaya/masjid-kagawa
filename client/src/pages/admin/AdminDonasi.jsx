@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import http from "../../api/http";
@@ -21,10 +21,6 @@ const EMPTY_FORM = {
   confirmationLink: "",
 };
 
-function getAdminToken() {
-  return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
-}
-
 export default function AdminDonasi() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(true);
@@ -32,11 +28,9 @@ export default function AdminDonasi() {
   const [err, setErr] = useState("");
   const [info, setInfo] = useState("");
 
-  const headers = useMemo(() => {
-    const token = getAdminToken();
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }, []);
-
+  // =========================
+  // LOAD DATA
+  // =========================
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -62,7 +56,7 @@ export default function AdminDonasi() {
         confirmationLink: data.confirmationLink || "",
       });
     } catch (e) {
-      console.error(e);
+      console.error("LOAD DONATION ERROR:", e);
       setErr("Gagal memuat pengaturan donasi.");
     } finally {
       setLoading(false);
@@ -73,10 +67,16 @@ export default function AdminDonasi() {
     loadData();
   }, [loadData]);
 
+  // =========================
+  // HANDLE CHANGE
+  // =========================
   const onChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  // =========================
+  // SUBMIT
+  // =========================
   const submit = async (e) => {
     e.preventDefault();
 
@@ -85,16 +85,22 @@ export default function AdminDonasi() {
       setErr("");
       setInfo("");
 
-      await http.put("/api/donation-settings", form, { headers });
+      // ❗ TIDAK pakai headers manual
+      await http.put("/api/donation-settings", form);
 
       setInfo("Pengaturan donasi berhasil diperbarui.");
       await loadData();
     } catch (e) {
-      console.error(e);
-      setErr(
-        e?.response?.data?.msg ||
-          "Gagal menyimpan pengaturan donasi. Pastikan login admin masih aktif."
-      );
+      console.error("SAVE DONATION ERROR:", e);
+
+      if (e?.response?.status === 401) {
+        setErr("Session habis. Silakan login ulang.");
+      } else {
+        setErr(
+          e?.response?.data?.msg ||
+            "Gagal menyimpan pengaturan donasi. Pastikan login admin masih aktif."
+        );
+      }
     } finally {
       setSaving(false);
     }
@@ -124,6 +130,9 @@ export default function AdminDonasi() {
 
         <form className="admin-donasi__layout" onSubmit={submit}>
           <div className="admin-donasi__grid">
+            {/* ========================= */}
+            {/* REKENING JEPANG */}
+            {/* ========================= */}
             <section className="admin-card">
               <div className="admin-card-header">
                 <div>
@@ -140,7 +149,6 @@ export default function AdminDonasi() {
                   <input
                     value={form.bankJapanName}
                     onChange={(e) => onChange("bankJapanName", e.target.value)}
-                    placeholder="Contoh: ゆうちょ銀行"
                   />
                 </label>
 
@@ -149,7 +157,6 @@ export default function AdminDonasi() {
                   <input
                     value={form.bankJapanBranch}
                     onChange={(e) => onChange("bankJapanBranch", e.target.value)}
-                    placeholder="Contoh: 店番 / 支店名"
                   />
                 </label>
 
@@ -157,8 +164,9 @@ export default function AdminDonasi() {
                   Nomor Rekening
                   <input
                     value={form.bankJapanAccountNumber}
-                    onChange={(e) => onChange("bankJapanAccountNumber", e.target.value)}
-                    placeholder="Contoh: 1234567"
+                    onChange={(e) =>
+                      onChange("bankJapanAccountNumber", e.target.value)
+                    }
                   />
                 </label>
 
@@ -166,13 +174,17 @@ export default function AdminDonasi() {
                   Atas Nama
                   <input
                     value={form.bankJapanAccountName}
-                    onChange={(e) => onChange("bankJapanAccountName", e.target.value)}
-                    placeholder="Contoh: Masjid Kagawa"
+                    onChange={(e) =>
+                      onChange("bankJapanAccountName", e.target.value)
+                    }
                   />
                 </label>
               </div>
             </section>
 
+            {/* ========================= */}
+            {/* REKENING INDONESIA */}
+            {/* ========================= */}
             <section className="admin-card">
               <div className="admin-card-header">
                 <div>
@@ -188,8 +200,9 @@ export default function AdminDonasi() {
                   Nama Bank
                   <input
                     value={form.bankIndonesiaName}
-                    onChange={(e) => onChange("bankIndonesiaName", e.target.value)}
-                    placeholder="Contoh: BSI / BCA / Mandiri"
+                    onChange={(e) =>
+                      onChange("bankIndonesiaName", e.target.value)
+                    }
                   />
                 </label>
 
@@ -197,8 +210,9 @@ export default function AdminDonasi() {
                   Cabang
                   <input
                     value={form.bankIndonesiaBranch}
-                    onChange={(e) => onChange("bankIndonesiaBranch", e.target.value)}
-                    placeholder="Contoh: Cabang Bandung"
+                    onChange={(e) =>
+                      onChange("bankIndonesiaBranch", e.target.value)
+                    }
                   />
                 </label>
 
@@ -206,8 +220,9 @@ export default function AdminDonasi() {
                   Nomor Rekening
                   <input
                     value={form.bankIndonesiaAccountNumber}
-                    onChange={(e) => onChange("bankIndonesiaAccountNumber", e.target.value)}
-                    placeholder="Contoh: 1234567890"
+                    onChange={(e) =>
+                      onChange("bankIndonesiaAccountNumber", e.target.value)
+                    }
                   />
                 </label>
 
@@ -215,20 +230,24 @@ export default function AdminDonasi() {
                   Atas Nama
                   <input
                     value={form.bankIndonesiaAccountName}
-                    onChange={(e) => onChange("bankIndonesiaAccountName", e.target.value)}
-                    placeholder="Contoh: Yayasan / Masjid / Pribadi"
+                    onChange={(e) =>
+                      onChange("bankIndonesiaAccountName", e.target.value)
+                    }
                   />
                 </label>
               </div>
             </section>
           </div>
 
+          {/* ========================= */}
+          {/* QRIS */}
+          {/* ========================= */}
           <section className="admin-card admin-donasi__full">
             <div className="admin-card-header">
               <div>
                 <p className="admin-card-title">QRIS & Instruksi Donasi</p>
                 <p className="admin-card-subtitle">
-                  Tampilkan QRIS, catatan, dan tombol konfirmasi di halaman publik.
+                  Tampilkan QRIS dan instruksi donasi.
                 </p>
               </div>
             </div>
@@ -246,8 +265,9 @@ export default function AdminDonasi() {
                 <textarea
                   rows={5}
                   value={form.donationNote}
-                  onChange={(e) => onChange("donationNote", e.target.value)}
-                  placeholder="Contoh: Mohon sertakan keterangan infaq / pembangunan / operasional."
+                  onChange={(e) =>
+                    onChange("donationNote", e.target.value)
+                  }
                 />
               </label>
 
@@ -256,8 +276,9 @@ export default function AdminDonasi() {
                   Teks Konfirmasi
                   <input
                     value={form.confirmationText}
-                    onChange={(e) => onChange("confirmationText", e.target.value)}
-                    placeholder="Contoh: Konfirmasi Donasi"
+                    onChange={(e) =>
+                      onChange("confirmationText", e.target.value)
+                    }
                   />
                 </label>
 
@@ -265,14 +286,18 @@ export default function AdminDonasi() {
                   Link Konfirmasi
                   <input
                     value={form.confirmationLink}
-                    onChange={(e) => onChange("confirmationLink", e.target.value)}
-                    placeholder="Contoh: https://wa.me/... atau Google Form"
+                    onChange={(e) =>
+                      onChange("confirmationLink", e.target.value)
+                    }
                   />
                 </label>
               </div>
             </div>
           </section>
 
+          {/* ========================= */}
+          {/* BUTTON */}
+          {/* ========================= */}
           <div className="admin-actions admin-donasi__actions">
             <button
               className="admin-btn admin-btn-primary"

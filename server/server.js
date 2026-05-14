@@ -1,7 +1,6 @@
 // server/server.js
 import express from "express";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -28,29 +27,12 @@ app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Static uploads folder:
-// server/uploads/... akan bisa diakses lewat /uploads/...
+// Static uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// ===== MongoDB =====
-const MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-  console.error("❌ MONGO_URI belum di-set di server/.env");
-  process.exit(1);
-}
-
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err.message);
-    process.exit(1);
-  });
 
 // ===== Routes =====
 app.get("/", (req, res) => {
-  res.json({ message: "Masjid Kagawa API is running" });
+  res.json({ message: "Masjid Kagawa API is running (Prisma)" });
 });
 
 app.use("/api/uploads", uploadRoutes);
@@ -63,7 +45,7 @@ app.use("/api/about-settings", aboutSettingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/prayer", prayerRoutes);
 
-// ===== 404 Handler =====
+// ===== 404 =====
 app.use((req, res) => {
   res.status(404).json({
     message: "Route tidak ditemukan",
@@ -71,7 +53,7 @@ app.use((req, res) => {
   });
 });
 
-// ===== Error handler =====
+// ===== Error =====
 app.use((err, req, res, next) => {
   console.error("❌ Server Error:", err);
   res.status(err?.status || 500).json({
@@ -85,5 +67,4 @@ const PORT = process.env.PORT || 5050;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Uploads served from: ${path.join(__dirname, "uploads")}`);
 });

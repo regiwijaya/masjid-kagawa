@@ -8,7 +8,8 @@ const allowedFolders = [
   "kajian",
   "posts",
   "about",
-  "donation",
+  "general",
+  "donation", // ✅ FIX TAMBAHAN
 ];
 
 const storage = multer.diskStorage({

@@ -1,7 +1,10 @@
 // server/controllers/prayerController.js
+import prisma from "../prisma/client.js";
 import { fetchPrayerTimesFromAladhan } from "../services/prayerService.js";
-import IqamahSetting from "../models/IqamahSetting.js";
 
+// =========================
+// HELPER
+// =========================
 function sanitizeTimeInput(value) {
   if (typeof value !== "string") return null;
 
@@ -12,16 +15,24 @@ function sanitizeTimeInput(value) {
   return isValid ? trimmed : null;
 }
 
+// =========================
+// GET / CREATE IQAMAH (SINGLE RECORD)
+// =========================
 async function getOrCreateIqamahSetting() {
-  let iqamah = await IqamahSetting.findOne();
+  let iqamah = await prisma.iqamahSetting.findFirst();
 
   if (!iqamah) {
-    iqamah = await IqamahSetting.create({});
+    iqamah = await prisma.iqamahSetting.create({
+      data: {},
+    });
   }
 
   return iqamah;
 }
 
+// =========================
+// GET PRAYER TIMES
+// =========================
 export async function getPrayerTimes(req, res) {
   try {
     const prayerData = await fetchPrayerTimesFromAladhan();
@@ -50,13 +61,16 @@ export async function getPrayerTimes(req, res) {
       },
     });
   } catch (error) {
-    console.error("❌ prayerController getPrayerTimes error:", error);
+    console.error("❌ getPrayerTimes ERROR:", error);
     res.status(500).json({
       message: "Failed to load prayer times",
     });
   }
 }
 
+// =========================
+// UPDATE IQAMAH
+// =========================
 export async function updateIqamah(req, res) {
   try {
     const current = await getOrCreateIqamahSetting();
@@ -77,21 +91,23 @@ export async function updateIqamah(req, res) {
       });
     }
 
-    Object.assign(current, updates);
-    await current.save();
+    const updated = await prisma.iqamahSetting.update({
+      where: { id: current.id },
+      data: updates,
+    });
 
     res.json({
       message: "Iqamah updated successfully",
       iqamah: {
-        subuh: current.subuh,
-        zuhur: current.zuhur,
-        asar: current.asar,
-        maghrib: current.maghrib,
-        isya: current.isya,
+        subuh: updated.subuh,
+        zuhur: updated.zuhur,
+        asar: updated.asar,
+        maghrib: updated.maghrib,
+        isya: updated.isya,
       },
     });
   } catch (error) {
-    console.error("❌ updateIqamah error:", error);
+    console.error("❌ updateIqamah ERROR:", error);
     res.status(500).json({
       message: "Failed updating iqamah",
     });

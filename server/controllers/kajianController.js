@@ -1,14 +1,17 @@
 // server/controllers/kajianController.js
-import Kajian from "../models/Kajian.js";
+import prisma from "../prisma/client.js";
 
 // =========================
 // PUBLIC
 // =========================
 export const getKajianPublished = async (req, res) => {
   try {
-    const items = await Kajian.find({ isPublished: true }).sort({
-      date: -1,
-      createdAt: -1,
+    const items = await prisma.kajian.findMany({
+      where: { isPublished: true },
+      orderBy: [
+        { date: "desc" },
+        { createdAt: "desc" },
+      ],
     });
 
     return res.json(items);
@@ -20,9 +23,17 @@ export const getKajianPublished = async (req, res) => {
 
 export const getKajianById = async (req, res) => {
   try {
-    const item = await Kajian.findOne({
-      _id: req.params.id,
-      isPublished: true,
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
+    }
+
+    const item = await prisma.kajian.findFirst({
+      where: {
+        id,
+        isPublished: true,
+      },
     });
 
     if (!item) {
@@ -41,9 +52,11 @@ export const getKajianById = async (req, res) => {
 // =========================
 export const getAllKajianAdmin = async (req, res) => {
   try {
-    const items = await Kajian.find({}).sort({
-      date: -1,
-      createdAt: -1,
+    const items = await prisma.kajian.findMany({
+      orderBy: [
+        { date: "desc" },
+        { createdAt: "desc" },
+      ],
     });
 
     return res.json(items);
@@ -69,22 +82,28 @@ export const createKajian = async (req, res) => {
     } = req.body;
 
     if (!title || !date) {
-      return res.status(400).json({ msg: "Judul kajian dan tanggal wajib diisi" });
+      return res.status(400).json({
+        msg: "Judul kajian dan tanggal wajib diisi",
+      });
     }
 
-    const created = await Kajian.create({
-      title: title.trim(),
-      category: category || "Lainnya",
-      ustadz: ustadz || "",
-      date,
-      time: time || "",
-      location: location || "Masjid Kagawa",
-      description: description || "",
-      imageUrl: imageUrl || "",
-      isPublished: typeof isPublished === "boolean" ? isPublished : true,
-      isFeatured: typeof isFeatured === "boolean" ? isFeatured : false,
-      createdBy: req.admin?._id,
-      updatedBy: req.admin?._id,
+    const created = await prisma.kajian.create({
+      data: {
+        title: title.trim(),
+        category: category || "Lainnya",
+        ustadz: ustadz || "",
+        date: new Date(date),
+        time: time || "",
+        location: location || "Masjid Kagawa",
+        description: description || "",
+        imageUrl: imageUrl || "",
+        isPublished:
+          typeof isPublished === "boolean" ? isPublished : true,
+        isFeatured:
+          typeof isFeatured === "boolean" ? isFeatured : false,
+        createdBy: req.admin?.id || null,
+        updatedBy: req.admin?.id || null,
+      },
     });
 
     return res.status(201).json(created);
@@ -96,18 +115,20 @@ export const createKajian = async (req, res) => {
 
 export const updateKajian = async (req, res) => {
   try {
-    const updated = await Kajian.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...req.body,
-        updatedBy: req.admin?._id,
-      },
-      { new: true }
-    );
+    const id = Number(req.params.id);
 
-    if (!updated) {
-      return res.status(404).json({ msg: "Kajian tidak ditemukan" });
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
     }
+
+    const updated = await prisma.kajian.update({
+      where: { id },
+      data: {
+        ...req.body,
+        date: req.body.date ? new Date(req.body.date) : undefined,
+        updatedBy: req.admin?.id || null,
+      },
+    });
 
     return res.json(updated);
   } catch (err) {
@@ -118,11 +139,15 @@ export const updateKajian = async (req, res) => {
 
 export const deleteKajian = async (req, res) => {
   try {
-    const deleted = await Kajian.findByIdAndDelete(req.params.id);
+    const id = Number(req.params.id);
 
-    if (!deleted) {
-      return res.status(404).json({ msg: "Kajian tidak ditemukan" });
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
     }
+
+    await prisma.kajian.delete({
+      where: { id },
+    });
 
     return res.json({ msg: "Kajian berhasil dihapus" });
   } catch (err) {

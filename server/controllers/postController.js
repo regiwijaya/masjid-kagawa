@@ -1,5 +1,9 @@
-import Post from "../models/Post.js";
+// server/controllers/postController.js
+import prisma from "../prisma/client.js";
 
+// =========================
+// HELPER
+// =========================
 function slugify(text = "") {
   return text
     .toString()
@@ -18,15 +22,17 @@ async function generateUniqueSlug(title, excludeId = null) {
   let counter = 2;
 
   while (true) {
-    const existing = await Post.findOne({
-      slug,
-      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
+    const existing = await prisma.post.findFirst({
+      where: {
+        slug,
+        ...(excludeId ? { NOT: { id: excludeId } } : {}),
+      },
     });
 
     if (!existing) return slug;
 
     slug = `${baseSlug}-${counter}`;
-    counter += 1;
+    counter++;
   }
 }
 
@@ -35,9 +41,12 @@ async function generateUniqueSlug(title, excludeId = null) {
 // =========================
 export const getPublishedPosts = async (req, res) => {
   try {
-    const items = await Post.find({ isPublished: true }).sort({
-      isFeatured: -1,
-      createdAt: -1,
+    const items = await prisma.post.findMany({
+      where: { isPublished: true },
+      orderBy: [
+        { isFeatured: "desc" },
+        { createdAt: "desc" },
+      ],
     });
 
     return res.json(items);
@@ -49,9 +58,11 @@ export const getPublishedPosts = async (req, res) => {
 
 export const getPostBySlug = async (req, res) => {
   try {
-    const item = await Post.findOne({
-      slug: req.params.slug,
-      isPublished: true,
+    const item = await prisma.post.findFirst({
+      where: {
+        slug: req.params.slug,
+        isPublished: true,
+      },
     });
 
     if (!item) {
@@ -70,8 +81,8 @@ export const getPostBySlug = async (req, res) => {
 // =========================
 export const getAllPostsAdmin = async (req, res) => {
   try {
-    const items = await Post.find({}).sort({
-      createdAt: -1,
+    const items = await prisma.post.findMany({
+      orderBy: [{ createdAt: "desc" }],
     });
 
     return res.json(items);
@@ -100,18 +111,22 @@ export const createPost = async (req, res) => {
 
     const slug = await generateUniqueSlug(title);
 
-    const created = await Post.create({
-      title: title.trim(),
-      slug,
-      excerpt: excerpt?.trim() || "",
-      content: content || "",
-      imageUrl: imageUrl?.trim() || "",
-      category: category?.trim() || "Artikel",
-      author: author?.trim() || "Admin Masjid Kagawa",
-      isPublished: typeof isPublished === "boolean" ? isPublished : true,
-      isFeatured: typeof isFeatured === "boolean" ? isFeatured : false,
-      createdBy: req.admin?._id,
-      updatedBy: req.admin?._id,
+    const created = await prisma.post.create({
+      data: {
+        title: title.trim(),
+        slug,
+        excerpt: excerpt?.trim() || "",
+        content: content || "",
+        imageUrl: imageUrl?.trim() || "",
+        category: category?.trim() || "Artikel",
+        author: author?.trim() || "Admin Masjid Kagawa",
+        isPublished:
+          typeof isPublished === "boolean" ? isPublished : true,
+        isFeatured:
+          typeof isFeatured === "boolean" ? isFeatured : false,
+        createdBy: req.admin?.id || null,
+        updatedBy: req.admin?.id || null,
+      },
     });
 
     return res.status(201).json(created);
@@ -123,43 +138,65 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   try {
-    const current = await Post.findById(req.params.id);
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
+    }
+
+    const current = await prisma.post.findUnique({
+      where: { id },
+    });
 
     if (!current) {
       return res.status(404).json({ msg: "Artikel tidak ditemukan" });
     }
 
     const nextTitle = req.body?.title?.trim() || current.title;
+
     const nextSlug =
       nextTitle !== current.title
-        ? await generateUniqueSlug(nextTitle, current._id)
+        ? await generateUniqueSlug(nextTitle, id)
         : current.slug;
 
-    current.title = nextTitle;
-    current.slug = nextSlug;
-    current.excerpt =
-      typeof req.body?.excerpt === "string" ? req.body.excerpt.trim() : current.excerpt;
-    current.content = typeof req.body?.content === "string" ? req.body.content : current.content;
-    current.imageUrl =
-      typeof req.body?.imageUrl === "string" ? req.body.imageUrl.trim() : current.imageUrl;
-    current.category =
-      typeof req.body?.category === "string" ? req.body.category.trim() : current.category;
-    current.author =
-      typeof req.body?.author === "string" ? req.body.author.trim() : current.author;
+    const updated = await prisma.post.update({
+      where: { id },
+      data: {
+        title: nextTitle,
+        slug: nextSlug,
+        excerpt:
+          typeof req.body?.excerpt === "string"
+            ? req.body.excerpt.trim()
+            : current.excerpt,
+        content:
+          typeof req.body?.content === "string"
+            ? req.body.content
+            : current.content,
+        imageUrl:
+          typeof req.body?.imageUrl === "string"
+            ? req.body.imageUrl.trim()
+            : current.imageUrl,
+        category:
+          typeof req.body?.category === "string"
+            ? req.body.category.trim()
+            : current.category,
+        author:
+          typeof req.body?.author === "string"
+            ? req.body.author.trim()
+            : current.author,
+        isPublished:
+          typeof req.body?.isPublished === "boolean"
+            ? req.body.isPublished
+            : current.isPublished,
+        isFeatured:
+          typeof req.body?.isFeatured === "boolean"
+            ? req.body.isFeatured
+            : current.isFeatured,
+        updatedBy: req.admin?.id || null,
+      },
+    });
 
-    if (typeof req.body?.isPublished === "boolean") {
-      current.isPublished = req.body.isPublished;
-    }
-
-    if (typeof req.body?.isFeatured === "boolean") {
-      current.isFeatured = req.body.isFeatured;
-    }
-
-    current.updatedBy = req.admin?._id;
-
-    await current.save();
-
-    return res.json(current);
+    return res.json(updated);
   } catch (err) {
     console.error("updatePost ERROR:", err);
     return res.status(500).json({ msg: "Server error" });
@@ -168,11 +205,15 @@ export const updatePost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const deleted = await Post.findByIdAndDelete(req.params.id);
+    const id = Number(req.params.id);
 
-    if (!deleted) {
-      return res.status(404).json({ msg: "Artikel tidak ditemukan" });
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
     }
+
+    await prisma.post.delete({
+      where: { id },
+    });
 
     return res.json({ msg: "Artikel berhasil dihapus" });
   } catch (err) {

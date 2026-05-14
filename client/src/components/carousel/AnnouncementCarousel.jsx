@@ -50,10 +50,11 @@ export default function AnnouncementCarousel() {
   useEffect(() => {
     const fetchHighlights = async () => {
       try {
-        const [annRes, actRes, kajRes] = await Promise.allSettled([
+        const [annRes, actRes, kajRes, postRes] = await Promise.allSettled([
           http.get("/api/announcements"),
           http.get("/api/activities"),
           http.get("/api/kajian"),
+          http.get("/api/posts"), // ✅ TAMBAHAN
         ]);
 
         const announcements =
@@ -104,7 +105,31 @@ export default function AnnouncementCarousel() {
               }))
             : [];
 
-        const merged = [...announcements, ...activities, ...kajian]
+        // ✅ ARTIKEL (INI KUNCI FIX)
+        const posts =
+          postRes.status === "fulfilled" && Array.isArray(postRes.value.data)
+            ? postRes.value.data
+                .filter((item) => item.isPublished && item.isFeatured)
+                .map((item) => ({
+                  id: `post-${item.id}`,
+                  title: item.title,
+                  category: item.category || "Artikel",
+                  source: "Artikel",
+                  imageUrl: item.imageUrl || "",
+                  date: item.createdAt,
+                  createdAt: item.createdAt,
+                  updatedAt: item.updatedAt,
+                  isFeatured: true,
+                  href: `/artikel/${item.slug}`,
+                }))
+            : [];
+
+        const merged = [
+          ...announcements,
+          ...activities,
+          ...kajian,
+          ...posts, // ✅ MASUKKAN KE FLOW YANG SAMA
+        ]
           .sort((a, b) => {
             if (a.isFeatured !== b.isFeatured) {
               return Number(b.isFeatured) - Number(a.isFeatured);
@@ -197,7 +222,6 @@ export default function AnnouncementCarousel() {
             type="button"
             className="announcement-strip__nav-btn"
             onClick={prevSlide}
-            aria-label="Sebelumnya"
           >
             <i className="bi bi-chevron-left"></i>
           </button>
@@ -206,7 +230,6 @@ export default function AnnouncementCarousel() {
             type="button"
             className="announcement-strip__nav-btn"
             onClick={nextSlide}
-            aria-label="Berikutnya"
           >
             <i className="bi bi-chevron-right"></i>
           </button>
@@ -228,18 +251,13 @@ export default function AnnouncementCarousel() {
         >
           {items.map((item) => (
             <article className="announcement-strip__item" key={item.id}>
-              <a
-                href={item.href}
-                className="announcement-strip__card"
-                aria-label={item.title}
-              >
+              <a href={item.href} className="announcement-strip__card">
                 <div className="announcement-strip__image-wrap">
                   <img
                     src={item.imageUrl || placeholder}
                     alt={item.title}
                     className="announcement-strip__image"
                     onError={handleImgError}
-                    loading="lazy"
                   />
 
                   <span className="announcement-strip__tag">

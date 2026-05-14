@@ -55,7 +55,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboard();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboard = async () => {
@@ -133,58 +132,18 @@ export default function AdminDashboard() {
     .slice(0, 3);
 
   const statCards = [
-    {
-      label: "Pengumuman Aktif",
-      value: publishedAnnouncements.length,
-      to: "/admin/pengumuman",
-      icon: "📣",
-    },
-    {
-      label: "Kajian Mendatang",
-      value: upcomingKajian.length,
-      to: "/admin/kajian",
-      icon: "📖",
-    },
-    {
-      label: "Kegiatan Mendatang",
-      value: upcomingActivities.length,
-      to: "/admin/kegiatan",
-      icon: "🕌",
-    },
-    {
-      label: "Artikel Published",
-      value: publishedPosts.length,
-      to: "/admin/posts",
-      icon: "📝",
-    },
+    { label: "Pengumuman Aktif", value: publishedAnnouncements.length, to: "/admin/pengumuman", icon: "📣" },
+    { label: "Kajian Mendatang", value: upcomingKajian.length, to: "/admin/kajian", icon: "📖" },
+    { label: "Kegiatan Mendatang", value: upcomingActivities.length, to: "/admin/kegiatan", icon: "🕌" },
+    { label: "Artikel Published", value: publishedPosts.length, to: "/admin/posts", icon: "📝" },
   ];
 
   const attentionItems = [
-    {
-      label: "Draft belum dipublish",
-      value: draftCount,
-      tone: draftCount > 0 ? "warning" : "good",
-    },
-    {
-      label: "Konten tanpa gambar/poster",
-      value: noImageCount,
-      tone: noImageCount > 0 ? "warning" : "good",
-    },
-    {
-      label: "Featured pengumuman",
-      value: featuredAnnouncements.length,
-      tone: featuredAnnouncements.length === 0 ? "warning" : "good",
-    },
-    {
-      label: "Featured kajian",
-      value: featuredKajian.length,
-      tone: featuredKajian.length === 0 ? "warning" : "good",
-    },
-    {
-      label: "Featured kegiatan",
-      value: featuredActivities.length,
-      tone: featuredActivities.length === 0 ? "warning" : "good",
-    },
+    { label: "Draft belum dipublish", value: draftCount, tone: draftCount > 0 ? "warning" : "good" },
+    { label: "Konten tanpa gambar/poster", value: noImageCount, tone: noImageCount > 0 ? "warning" : "good" },
+    { label: "Featured pengumuman", value: featuredAnnouncements.length, tone: featuredAnnouncements.length === 0 ? "warning" : "good" },
+    { label: "Featured kajian", value: featuredKajian.length, tone: featuredKajian.length === 0 ? "warning" : "good" },
+    { label: "Featured kegiatan", value: featuredActivities.length, tone: featuredActivities.length === 0 ? "warning" : "good" },
   ];
 
   const prayerRows = [
@@ -198,16 +157,14 @@ export default function AdminDashboard() {
   return (
     <AdminLayout title="Dashboard">
       <div className="admin-dashboard-page">
+
+        {/* HERO tetap */}
         <section className="admin-dashboard-hero">
           <div>
             <span className="admin-dashboard-eyebrow">Masjid Kagawa Admin</span>
             <h1>Dashboard Masjid</h1>
-            <p>
-              Ringkasan kondisi website, konten terbaru, jadwal shalat hari ini,
-              dan hal-hal yang perlu diperhatikan oleh admin.
-            </p>
+            <p>Ringkasan kondisi website dan konten.</p>
           </div>
-
           <div className="admin-dashboard-hero-status">
             <span>Website</span>
             <strong>Aktif</strong>
@@ -218,7 +175,7 @@ export default function AdminDashboard() {
 
         <section className="admin-dashboard-stats">
           {statCards.map((item) => (
-            <Link to={item.to} className="admin-dashboard-stat-card" key={item.label}>
+            <Link key={item.label} to={item.to} className="admin-dashboard-stat-card">
               <div className="admin-dashboard-stat-icon">{item.icon}</div>
               <div>
                 <p>{item.label}</p>
@@ -233,23 +190,16 @@ export default function AdminDashboard() {
             <div className="admin-card-header admin-dashboard-card-header">
               <div>
                 <p className="admin-card-title">Jadwal Shalat Hari Ini</p>
-                <p className="admin-card-subtitle">
-                  Ringkasan adzan dan iqamah yang tampil di website publik.
-                </p>
               </div>
-
-              <Link to="/admin/prayer" className="admin-dashboard-small-link">
-                Kelola Iqamah
-              </Link>
             </div>
 
             <div className="admin-card-body">
               {loading ? (
-                <p className="admin-muted">Memuat jadwal...</p>
+                <p className="admin-muted">Memuat...</p>
               ) : (
                 <div className="admin-dashboard-prayer-list">
                   {prayerRows.map(([name, adzan, iqamah]) => (
-                    <div className="admin-dashboard-prayer-row" key={name}>
+                    <div key={name} className="admin-dashboard-prayer-row">
                       <span>{name}</span>
                       <div>
                         <strong>{adzan || "-"}</strong>
@@ -263,20 +213,10 @@ export default function AdminDashboard() {
           </div>
 
           <div className="admin-card">
-            <div className="admin-card-header">
-              <p className="admin-card-title">Perlu Perhatian</p>
-              <p className="admin-card-subtitle">
-                Poin yang sebaiknya dicek agar website tetap lengkap.
-              </p>
-            </div>
-
             <div className="admin-card-body">
               <div className="admin-dashboard-attention-list">
                 {attentionItems.map((item) => (
-                  <div
-                    className={`admin-dashboard-attention-item is-${item.tone}`}
-                    key={item.label}
-                  >
+                  <div key={item.label} className={`admin-dashboard-attention-item is-${item.tone}`}>
                     <span>{item.label}</span>
                     <strong>{loading ? "…" : item.value}</strong>
                   </div>
@@ -287,103 +227,23 @@ export default function AdminDashboard() {
         </section>
 
         <section className="admin-card">
-          <div className="admin-card-header">
-            <p className="admin-card-title">Konten Terbaru di Website</p>
-            <p className="admin-card-subtitle">
-              Preview ringkas konten terakhir dari setiap modul.
-            </p>
-          </div>
-
           <div className="admin-card-body">
             <div className="admin-dashboard-content-grid">
-              <ContentColumn
-                title="Pengumuman"
-                items={latestAnnouncements}
-                to="/admin/pengumuman"
-                empty="Belum ada pengumuman."
-              />
-              <ContentColumn
-                title="Kajian"
-                items={latestKajian}
-                to="/admin/kajian"
-                empty="Belum ada kajian."
-              />
-              <ContentColumn
-                title="Kegiatan"
-                items={latestActivities}
-                to="/admin/kegiatan"
-                empty="Belum ada kegiatan."
-              />
-              <ContentColumn
-                title="Artikel"
-                items={latestPosts}
-                to="/admin/posts"
-                empty="Belum ada artikel."
-              />
+              {[latestAnnouncements, latestKajian, latestActivities, latestPosts].map((list, idx) => (
+                <div key={idx} className="admin-dashboard-content-column">
+                  {(list || []).map((item) => (
+                    <div key={item.id} className="admin-dashboard-content-item">
+                      <strong>{item.title}</strong>
+                      <span>{formatDate(item.date || item.createdAt)}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="admin-dashboard-homepage-status">
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <p className="admin-card-title">Status Homepage</p>
-              <p className="admin-card-subtitle">
-                Jumlah konten pilihan yang dapat ditampilkan di halaman utama.
-              </p>
-            </div>
-
-            <div className="admin-card-body">
-              <div className="admin-dashboard-featured-row">
-                <FeaturedBox label="Pengumuman Pilihan" value={featuredAnnouncements.length} />
-                <FeaturedBox label="Kajian Pilihan" value={featuredKajian.length} />
-                <FeaturedBox label="Kegiatan Pilihan" value={featuredActivities.length} />
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </AdminLayout>
-  );
-}
-
-function ContentColumn({ title, items, to, empty }) {
-  return (
-    <div className="admin-dashboard-content-column">
-      <div className="admin-dashboard-content-column-head">
-        <h4>{title}</h4>
-        <Link to={to}>Lihat semua</Link>
-      </div>
-
-      {items.length === 0 ? (
-        <p className="admin-dashboard-empty">{empty}</p>
-      ) : (
-        <div className="admin-dashboard-content-list">
-          {items.map((item) => (
-            <div className="admin-dashboard-content-item" key={item._id}>
-              <strong>{item.title}</strong>
-              <span>
-                {item.category || "Umum"} • {formatDate(item.date || item.createdAt)}
-              </span>
-              <div>
-                <em className={item.isPublished ? "is-published" : "is-draft"}>
-                  {item.isPublished ? "Published" : "Draft"}
-                </em>
-                {item.isFeatured && <em className="is-featured">Featured</em>}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function FeaturedBox({ label, value }) {
-  return (
-    <div className={`admin-dashboard-featured-box ${value === 0 ? "is-empty" : ""}`}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
   );
 }

@@ -1,9 +1,7 @@
 import Hero from "../../components/hero/Hero";
 import PrayerTimesCard from "../../components/cards/PrayerTimesCard";
 import AnnouncementCarousel from "../../components/carousel/AnnouncementCarousel";
-import HomePengumuman from "../../components/common/HomePengumuman";
-import HomeKegiatan from "../../components/common/HomeKegiatan";
-import HomeKajian from "../../components/common/HomeKajian";
+import HomeHighlights from "../../components/common/HomeHighlights"; // ✅ BARU
 import "../../styles/pages/MasjidPages.css";
 import { useEffect, useMemo, useState } from "react";
 
@@ -125,9 +123,7 @@ export default function Home() {
         <div className="home-shell">
           <div className="home-announcement-stack">
             <AnnouncementCarousel />
-            <HomePengumuman />
-            <HomeKegiatan />
-            <HomeKajian />
+            <HomeHighlights /> {/* ✅ GANTI DI SINI */}
           </div>
         </div>
       </section>

@@ -1,43 +1,65 @@
 // server/controllers/adminController.js
-import Admin from "../models/Admin.js";
+import prisma from "../prisma/client.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // ===============================
 // REGISTER ADMIN
 // ===============================
 export const registerAdmin = async (req, res) => {
   try {
+    console.log("👉 REGISTER BODY:", req.body);
+
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ msg: "Semua kolom wajib diisi" });
     }
 
-    const exists = await Admin.findOne({ email });
-    if (exists) return res.status(400).json({ msg: "Email sudah terdaftar" });
-
-    // password biarkan pre-save di Admin.js yang hash
-    const admin = await Admin.create({
-      name,
-      email,
-      password,
-      role: req.isFirstAdmin ? "superadmin" : "admin",
+    // cek admin sudah ada
+    const exists = await prisma.admin.findUnique({
+      where: { email },
     });
 
+    if (exists) {
+      return res.status(400).json({ msg: "Email sudah terdaftar" });
+    }
+
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // cek apakah admin pertama
+    const count = await prisma.admin.count();
+
+    const admin = await prisma.admin.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role: count === 0 ? "superadmin" : "admin",
+      },
+    });
+
+    console.log("✅ ADMIN CREATED:", admin);
+
     res.status(201).json({
-      msg: req.isFirstAdmin
-        ? "Admin pertama (Superadmin) berhasil dibuat"
-        : "Admin baru berhasil ditambahkan",
+      msg:
+        count === 0
+          ? "Admin pertama (Superadmin) berhasil dibuat"
+          : "Admin baru berhasil ditambahkan",
       admin: {
-        id: admin._id,
+        id: admin.id,
         name: admin.name,
         email: admin.email,
         role: admin.role,
       },
     });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
-    res.status(500).json({ msg: "Server error" });
+    console.error("❌ REGISTER ERROR:", err);
+    res.status(500).json({
+      msg: "Server error",
+      error: err.message,
+    });
   }
 };
 
@@ -46,32 +68,48 @@ export const registerAdmin = async (req, res) => {
 // ===============================
 export const loginAdmin = async (req, res) => {
   try {
+    console.log("👉 LOGIN BODY:", req.body);
+
     const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ email });
-    if (!admin) return res.status(400).json({ msg: "Email tidak ditemukan" });
-
-    // gunakan method dari model
-    const match = await admin.matchPassword(password);
-    if (!match) return res.status(400).json({ msg: "Password salah" });
-
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+    const admin = await prisma.admin.findUnique({
+      where: { email },
     });
+
+    if (!admin) {
+      return res.status(400).json({ msg: "Email tidak ditemukan" });
+    }
+
+    const match = await bcrypt.compare(password, admin.password);
+
+    if (!match) {
+      return res.status(400).json({ msg: "Password salah" });
+    }
+
+    const token = jwt.sign(
+      { id: admin.id },
+      process.env.JWT_SECRET || "secret",
+      {
+        expiresIn: "7d",
+      }
+    );
 
     res.json({
       msg: "Login sukses",
       token,
       admin: {
-        id: admin._id,
+        id: admin.id,
         name: admin.name,
         email: admin.email,
         role: admin.role,
       },
     });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    res.status(500).json({ msg: "Server error" });
+    console.error("❌ LOGIN ERROR:", err);
+    res.status(500).json({
+      msg: "Server error",
+      error: err.message,
+    });
   }
 };
 
@@ -80,10 +118,22 @@ export const loginAdmin = async (req, res) => {
 // ===============================
 export const getAdminProfile = async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id).select("-password");
-    res.json(admin);
+    const admin = await prisma.admin.findUnique({
+      where: { id: req.admin.id },
+    });
+
+    if (!admin) {
+      return res.status(404).json({ msg: "Admin tidak ditemukan" });
+    }
+
+    const { password, ...safeAdmin } = admin;
+
+    res.json(safeAdmin);
   } catch (err) {
-    console.error("PROFILE ERROR:", err);
-    res.status(500).json({ msg: "Server error" });
+    console.error("❌ PROFILE ERROR:", err);
+    res.status(500).json({
+      msg: "Server error",
+      error: err.message,
+    });
   }
 };

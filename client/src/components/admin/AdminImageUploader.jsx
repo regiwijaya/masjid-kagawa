@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import Cropper from "react-easy-crop";
-import "/Users/macbookregi/Masjid-Kagawa/client/src/styles/admin/AdminImageUploader.css";
+import "../../styles/admin/AdminImageUploader.css";
 
 function getAdminToken() {
   return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
@@ -32,17 +32,7 @@ async function getCroppedImageBlob(imageSrc, croppedAreaPixels) {
   canvas.width = cropW;
   canvas.height = cropH;
 
-  ctx.drawImage(
-    image,
-    cropX,
-    cropY,
-    cropW,
-    cropH,
-    0,
-    0,
-    cropW,
-    cropH
-  );
+  ctx.drawImage(image, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -54,13 +44,13 @@ async function getCroppedImageBlob(imageSrc, croppedAreaPixels) {
         resolve(blob);
       },
       "image/jpeg",
-      0.82
+      0.85
     );
   });
 }
 
 export default function AdminImageUploader({
-  type = "about",
+  type = "general",
   label = "Upload Gambar",
   value = "",
   onChange,
@@ -76,8 +66,7 @@ export default function AdminImageUploader({
 
   const previewSrc = useMemo(() => {
     if (!value) return "";
-    if (value.startsWith("http")) return value;
-    return value;
+    return value.startsWith("http") ? value : value;
   }, [value]);
 
   const onCropComplete = useCallback((_, croppedPixels) => {
@@ -122,12 +111,12 @@ export default function AdminImageUploader({
 
     try {
       setUploading(true);
-      setMessage("Memproses gambar...");
+      setMessage("Uploading...");
 
       const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels);
 
       const formData = new FormData();
-      formData.append("image", blob, "cropped-image.jpg");
+      formData.append("image", blob, "cropped.jpg");
 
       const res = await fetch(`/api/uploads/${type}`, {
         method: "POST",
@@ -140,15 +129,15 @@ export default function AdminImageUploader({
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data?.msg || "Upload gagal.");
+        throw new Error(data?.msg || "Upload gagal");
       }
 
       onChange?.(data.imageUrl);
-      setMessage("Gambar berhasil diupload.");
+      setMessage("Upload berhasil");
       resetCrop();
     } catch (err) {
       console.error(err);
-      setMessage(err?.message || "Upload gagal.");
+      setMessage(err.message || "Upload gagal");
     } finally {
       setUploading(false);
     }
@@ -185,8 +174,6 @@ export default function AdminImageUploader({
               crop={crop}
               zoom={zoom}
               aspect={aspect}
-              cropShape="rect"
-              showGrid
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete}
@@ -206,11 +193,9 @@ export default function AdminImageUploader({
               />
             </label>
 
-            {fileName && (
-              <p className="admin-image-uploader__message">
-                File: {fileName}
-              </p>
-            )}
+            <p className="admin-image-uploader__message">
+              File: {fileName}
+            </p>
 
             <div className="admin-image-uploader__actions">
               <button
@@ -219,7 +204,7 @@ export default function AdminImageUploader({
                 onClick={handleCropDone}
                 disabled={uploading}
               >
-                {uploading ? "Mengupload..." : "Crop & Upload"}
+                {uploading ? "Uploading..." : "Crop & Upload"}
               </button>
 
               <button

@@ -61,6 +61,7 @@ export default function AdminPosts() {
   const filteredItems = items.filter((item) => {
     const title = item.title || "";
     const category = item.category || "";
+
     const matchSearch =
       title.toLowerCase().includes(search.toLowerCase()) ||
       category.toLowerCase().includes(search.toLowerCase());
@@ -80,7 +81,7 @@ export default function AdminPosts() {
   };
 
   const startEdit = (item) => {
-    setEditId(item._id);
+    setEditId(item.id); // ✅ FIX
     setErr("");
     setInfo("");
 
@@ -172,7 +173,7 @@ export default function AdminPosts() {
       setInfo("");
 
       await http.put(
-        `/api/posts/${item._id}`,
+        `/api/posts/${item.id}`, // ✅ FIX
         { isPublished: !item.isPublished },
         { headers }
       );
@@ -191,7 +192,7 @@ export default function AdminPosts() {
       setInfo("");
 
       await http.put(
-        `/api/posts/${item._id}`,
+        `/api/posts/${item.id}`, // ✅ FIX
         { isFeatured: !item.isFeatured },
         { headers }
       );
@@ -379,7 +380,7 @@ export default function AdminPosts() {
               ) : (
                 <ul className="admin-posts-list">
                   {filteredItems.map((item) => (
-                    <li key={item._id} className="admin-posts-item">
+                    <li key={item.id} className="admin-posts-item">
                       <div className="admin-posts-item__main">
                         {item.imageUrl && (
                           <div className="admin-posts-item__thumb">
@@ -442,7 +443,7 @@ export default function AdminPosts() {
                         <button
                           className="admin-btn admin-btn-danger"
                           type="button"
-                          onClick={() => remove(item._id)}
+                          onClick={() => remove(item.id)}
                         >
                           Hapus
                         </button>

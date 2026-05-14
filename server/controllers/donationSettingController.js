@@ -1,23 +1,29 @@
 // server/controllers/donationSettingController.js
-import DonationSetting from "../models/DonationSetting.js";
+import prisma from "../prisma/client.js";
 
+// =========================
+// HELPER: GET / CREATE SINGLE RECORD
+// =========================
 async function getOrCreateDonationSetting(adminId = null) {
-  let setting = await DonationSetting.findOne();
+  let setting = await prisma.donationSetting.findFirst();
 
   if (!setting) {
-    setting = await DonationSetting.create({
-      updatedBy: adminId || undefined,
+    setting = await prisma.donationSetting.create({
+      data: {
+        updatedBy: adminId || null,
+      },
     });
   }
 
   return setting;
 }
 
+// =========================
 // PUBLIC
+// =========================
 export const getDonationSetting = async (req, res) => {
   try {
     const setting = await getOrCreateDonationSetting();
-
     return res.json(setting);
   } catch (err) {
     console.error("getDonationSetting ERROR:", err);
@@ -25,10 +31,12 @@ export const getDonationSetting = async (req, res) => {
   }
 };
 
+// =========================
 // ADMIN
+// =========================
 export const updateDonationSetting = async (req, res) => {
   try {
-    const current = await getOrCreateDonationSetting(req.admin?._id);
+    const current = await getOrCreateDonationSetting(req.admin?.id);
 
     const allowedFields = [
       "bankJapanName",
@@ -45,18 +53,24 @@ export const updateDonationSetting = async (req, res) => {
       "confirmationLink",
     ];
 
+    let updatedData = {};
+
     for (const field of allowedFields) {
       if (typeof req.body?.[field] === "string") {
-        current[field] = req.body[field].trim();
+        updatedData[field] = req.body[field].trim();
       }
     }
 
-    current.updatedBy = req.admin?._id;
-    await current.save();
+    updatedData.updatedBy = req.admin?.id || null;
+
+    const updated = await prisma.donationSetting.update({
+      where: { id: current.id },
+      data: updatedData,
+    });
 
     return res.json({
       msg: "Donation setting updated successfully",
-      data: current,
+      data: updated,
     });
   } catch (err) {
     console.error("updateDonationSetting ERROR:", err);

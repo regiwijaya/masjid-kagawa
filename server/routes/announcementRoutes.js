@@ -13,17 +13,15 @@ import { protectAdmin } from "../middlewares/authAdmin.js";
 const router = express.Router();
 
 // =========================
-// ADMIN (HARUS DI ATAS)
-// =========================
-router.get("/admin/all", protectAdmin, getAllAnnouncementsAdmin);
-router.post("/", protectAdmin, createAnnouncement);
-router.put("/:id", protectAdmin, updateAnnouncement);
-router.delete("/:id", protectAdmin, deleteAnnouncement);
-
-// =========================
-// PUBLIC
-// =========================
+// PUBLIC (TARUH DULUAN)
 router.get("/", getPublishedAnnouncements);
 router.get("/:id", getAnnouncementById);
+
+// =========================
+// ADMIN (BEDAKAN PATH!)
+router.get("/admin/all", protectAdmin, getAllAnnouncementsAdmin);
+router.post("/admin", protectAdmin, createAnnouncement);
+router.put("/admin/:id", protectAdmin, updateAnnouncement);
+router.delete("/admin/:id", protectAdmin, deleteAnnouncement);
 
 export default router;
