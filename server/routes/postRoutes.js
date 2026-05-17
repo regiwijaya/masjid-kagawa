@@ -16,12 +16,8 @@ const router = express.Router();
 
 /**
  * =========================
- * ADMIN (WAJIB DI ATAS)
+ * ADMIN (HARUS DI ATAS)
  * =========================
- * GET    /api/posts/admin/all   -> list semua
- * POST   /api/posts             -> create
- * PUT    /api/posts/:id         -> update
- * DELETE /api/posts/:id         -> delete
  */
 router.get("/admin/all", protectAdmin, getAllPostsAdmin);
 router.post("/", protectAdmin, createPost);
@@ -30,12 +26,14 @@ router.delete("/:id", protectAdmin, deletePost);
 
 /**
  * =========================
- * PUBLIC
+ * PUBLIC (URUTAN KRITIS)
  * =========================
- * GET /api/posts              -> list published
- * GET /api/posts/slug/:slug   -> detail by slug (AMAN)
  */
-router.get("/", getPublishedPosts);
+
+// 🔥 FIX: slug route harus di atas
 router.get("/slug/:slug", getPostBySlug);
+
+// list semua artikel
+router.get("/", getPublishedPosts);
 
 export default router;

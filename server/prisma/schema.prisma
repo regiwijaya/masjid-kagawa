@@ -67,16 +67,22 @@ model Post {
   id          Int      @id @default(autoincrement())
   title       String
   slug        String   @unique
-  excerpt     String?
-  content     String?
+
+  excerpt     String   @db.Text
+  content     String   @db.LongText
+
   imageUrl    String?
-  category    String?  @default("Artikel")
-  author      String?  @default("Admin Masjid Kagawa")
+  category    String?
+  author      String?
+
   isPublished Boolean  @default(true)
   isFeatured  Boolean  @default(false)
+
   createdBy   Int?
   updatedBy   Int?
+
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now()) // 🔥 FIX
 }
 
 model AboutSetting {

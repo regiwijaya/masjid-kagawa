@@ -1,9 +1,8 @@
-// server/controllers/postController.js
 import prisma from "../prisma/client.js";
 
-// =========================
-// HELPER
-// =========================
+/* ======================================
+   HELPER
+====================================== */
 function slugify(text = "") {
   return text
     .toString()
@@ -22,23 +21,32 @@ async function generateUniqueSlug(title, excludeId = null) {
   let counter = 2;
 
   while (true) {
-    const existing = await prisma.post.findFirst({
-      where: {
-        slug,
-        ...(excludeId ? { NOT: { id: excludeId } } : {}),
-      },
+    const existing = await prisma.post.findUnique({
+      where: { slug },
     });
 
-    if (!existing) return slug;
+    if (!existing || existing.id === excludeId) return slug;
 
     slug = `${baseSlug}-${counter}`;
     counter++;
   }
 }
 
-// =========================
-// PUBLIC
-// =========================
+/* ======================================
+   CLEAN HTML (FIX UTAMA)
+====================================== */
+function cleanHtml(html = "") {
+  if (!html) return "";
+
+  return html
+    .replace(/\\/g, "") // hilangkan escape backslash
+    .replace(/\n/g, "") // hilangkan newline
+    .trim();
+}
+
+/* ======================================
+   PUBLIC
+====================================== */
 export const getPublishedPosts = async (req, res) => {
   try {
     const items = await prisma.post.findMany({
@@ -58,14 +66,11 @@ export const getPublishedPosts = async (req, res) => {
 
 export const getPostBySlug = async (req, res) => {
   try {
-    const item = await prisma.post.findFirst({
-      where: {
-        slug: req.params.slug,
-        isPublished: true,
-      },
+    const item = await prisma.post.findUnique({
+      where: { slug: req.params.slug },
     });
 
-    if (!item) {
+    if (!item || !item.isPublished) {
       return res.status(404).json({ msg: "Artikel tidak ditemukan" });
     }
 
@@ -76,9 +81,9 @@ export const getPostBySlug = async (req, res) => {
   }
 };
 
-// =========================
-// ADMIN
-// =========================
+/* ======================================
+   ADMIN
+====================================== */
 export const getAllPostsAdmin = async (req, res) => {
   try {
     const items = await prisma.post.findMany({
@@ -92,6 +97,9 @@ export const getAllPostsAdmin = async (req, res) => {
   }
 };
 
+/* ======================================
+   CREATE (FIX HTML CLEAN)
+====================================== */
 export const createPost = async (req, res) => {
   try {
     const {
@@ -116,16 +124,12 @@ export const createPost = async (req, res) => {
         title: title.trim(),
         slug,
         excerpt: excerpt?.trim() || "",
-        content: content || "",
+        content: cleanHtml(content), // ✅ FIX DI SINI
         imageUrl: imageUrl?.trim() || "",
         category: category?.trim() || "Artikel",
         author: author?.trim() || "Admin Masjid Kagawa",
-        isPublished:
-          typeof isPublished === "boolean" ? isPublished : true,
-        isFeatured:
-          typeof isFeatured === "boolean" ? isFeatured : false,
-        createdBy: req.admin?.id || null,
-        updatedBy: req.admin?.id || null,
+        isPublished: typeof isPublished === "boolean" ? isPublished : true,
+        isFeatured: typeof isFeatured === "boolean" ? isFeatured : false,
       },
     });
 
@@ -136,6 +140,9 @@ export const createPost = async (req, res) => {
   }
 };
 
+/* ======================================
+   UPDATE (FIX HTML + ID)
+====================================== */
 export const updatePost = async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -170,7 +177,7 @@ export const updatePost = async (req, res) => {
             : current.excerpt,
         content:
           typeof req.body?.content === "string"
-            ? req.body.content
+            ? cleanHtml(req.body.content) // ✅ FIX DI SINI
             : current.content,
         imageUrl:
           typeof req.body?.imageUrl === "string"
@@ -192,7 +199,6 @@ export const updatePost = async (req, res) => {
           typeof req.body?.isFeatured === "boolean"
             ? req.body.isFeatured
             : current.isFeatured,
-        updatedBy: req.admin?.id || null,
       },
     });
 
@@ -203,6 +209,9 @@ export const updatePost = async (req, res) => {
   }
 };
 
+/* ======================================
+   DELETE
+====================================== */
 export const deletePost = async (req, res) => {
   try {
     const id = Number(req.params.id);

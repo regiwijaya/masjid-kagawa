@@ -1,8 +1,7 @@
-// server/controllers/aboutSettingController.js
 import prisma from "../prisma/client.js";
 
 // =========================
-// HELPER: GET / CREATE SINGLE RECORD
+// HELPER
 // =========================
 async function getOrCreateAboutSetting(adminId = null) {
   let setting = await prisma.aboutSetting.findFirst();
@@ -12,32 +11,17 @@ async function getOrCreateAboutSetting(adminId = null) {
       data: {
         updatedBy: adminId || null,
         historyText:
-          "Masjid Kagawa berdiri sebagai pusat ibadah, dakwah, dan pembinaan bagi kaum muslimin di Prefektur Kagawa. Sejak awal berdirinya, masjid ini menjadi tempat berkumpul, belajar, dan memperkuat ukhuwah di antara komunitas muslim dari berbagai negara.",
+          "Masjid Kagawa berdiri sebagai pusat ibadah, dakwah, dan pembinaan...",
         visionText:
-          "Menjadi pusat ibadah, dakwah, dan pendidikan Islam yang membimbing umat menuju akhlak mulia.",
+          "Menjadi pusat ibadah, dakwah, dan pendidikan Islam...",
         missionItems: [
           "Menyelenggarakan pembinaan keagamaan",
-          "Menyediakan sarana ibadah yang baik",
-          "Membangun ukhuwah Islamiyah",
-          "Menyelenggarakan kajian rutin",
+          "Menyediakan sarana ibadah",
+          "Membangun ukhuwah",
         ],
-        leaders: [
-          { role: "Ketua", name: "Zulfikar", note: "" },
-          { role: "Imam", name: "Regi Wijaya Sasmita", note: "" },
-          {
-            role: "Imam Magang",
-            name: "Dihyah bin Nasarudin",
-            note: "20 Januari 2026 – 10 April 2026",
-          },
-          {
-            role: "Imam Magang",
-            name: "Harith Naufal bin Mohd. Hilmi",
-            note: "20 Januari 2026 – 10 April 2026",
-          },
-        ],
-        footerDescription:
-          "Pusat ibadah, dakwah, pendidikan, dan kegiatan sosial bagi komunitas Muslim di Kagawa, Jepang.",
-        address: "Kagawa, Jepang",
+        leaders: [],
+        footerDescription: "",
+        address: "",
         email: "",
         phone: "",
         mapEmbedUrl: "",
@@ -59,24 +43,28 @@ async function getOrCreateAboutSetting(adminId = null) {
 // NORMALIZER
 // =========================
 function normalizeMissionItems(items) {
-  if (!Array.isArray(items)) return [];
-  return items
+  if (!Array.isArray(items)) return null;
+
+  const result = items
     .map((item) => (typeof item === "string" ? item.trim() : ""))
     .filter(Boolean);
+
+  return result.length ? result : null; // 🔥 FIX
 }
 
 function normalizeLeaders(leaders) {
-  if (!Array.isArray(leaders)) return [];
+  if (!Array.isArray(leaders)) return null;
 
-  return leaders
+  const result = leaders
     .map((item) => ({
-      role: typeof item?.role === "string" ? item.role.trim() : "",
-      name: typeof item?.name === "string" ? item.name.trim() : "",
-      imageUrl:
-        typeof item?.imageUrl === "string" ? item.imageUrl.trim() : "",
-      note: typeof item?.note === "string" ? item.note.trim() : "",
+      role: item?.role?.trim() || "",
+      name: item?.name?.trim() || "",
+      imageUrl: item?.imageUrl?.trim() || "",
+      note: item?.note?.trim() || "",
     }))
-    .filter((item) => item.role || item.name || item.imageUrl || item.note);
+    .filter((l) => l.role || l.name || l.imageUrl || l.note);
+
+  return result.length ? result : null; // 🔥 FIX
 }
 
 // =========================
@@ -120,36 +108,45 @@ export const updateAboutSetting = async (req, res) => {
 
     let updatedData = {};
 
+    // =========================
+    // STRING FIELDS
+    // =========================
     for (const field of stringFields) {
       if (typeof req.body?.[field] === "string") {
         updatedData[field] = req.body[field].trim();
       }
     }
 
-    if (req.body?.missionItems) {
-      updatedData.missionItems = normalizeMissionItems(
-        req.body.missionItems
-      );
+    // =========================
+    // ARRAY SAFE UPDATE
+    // =========================
+    const missionItems = normalizeMissionItems(req.body?.missionItems);
+    if (missionItems !== null) {
+      updatedData.missionItems = missionItems;
     }
 
-    if (req.body?.leaders) {
-      updatedData.leaders = normalizeLeaders(req.body.leaders);
+    const leaders = normalizeLeaders(req.body?.leaders);
+    if (leaders !== null) {
+      updatedData.leaders = leaders;
     }
 
+    // =========================
+    // SOCIAL SAFE MERGE
+    // =========================
     if (req.body?.social && typeof req.body.social === "object") {
       updatedData.social = {
         facebook:
-          typeof req.body.social.facebook === "string"
-            ? req.body.social.facebook.trim()
-            : current.social?.facebook || "",
+          req.body.social.facebook?.trim() ??
+          current.social?.facebook ??
+          "",
         instagram:
-          typeof req.body.social.instagram === "string"
-            ? req.body.social.instagram.trim()
-            : current.social?.instagram || "",
+          req.body.social.instagram?.trim() ??
+          current.social?.instagram ??
+          "",
         youtube:
-          typeof req.body.social.youtube === "string"
-            ? req.body.social.youtube.trim()
-            : current.social?.youtube || "",
+          req.body.social.youtube?.trim() ??
+          current.social?.youtube ??
+          "",
       };
     }
 
