@@ -60,7 +60,7 @@ export default function AdminKegiatan() {
       setItems(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error(e);
-      setErr("Gagal memuat kegiatan admin.");
+      setErr("Gagal memuat kegiatan.");
     } finally {
       setLoading(false);
     }
@@ -70,9 +70,13 @@ export default function AdminKegiatan() {
     fetchItems();
   }, [fetchItems]);
 
+  // =========================
+  // FILTER
+  // =========================
   const filteredItems = items.filter((item) => {
-    const title = item.title || "";
-    const matchSearch = title.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (item.title || "")
+      .toLowerCase()
+      .includes(search.toLowerCase());
 
     const matchStatus =
       filterStatus === "all"
@@ -100,9 +104,7 @@ export default function AdminKegiatan() {
   };
 
   const startEdit = (item) => {
-    setEditId(item._id);
-    setErr("");
-    setInfo("");
+    setEditId(item.id); // ✅ FIX
 
     setForm({
       title: item.title || "",
@@ -123,15 +125,8 @@ export default function AdminKegiatan() {
   const submit = async (e) => {
     e.preventDefault();
 
-    if (!form.title.trim()) {
-      setErr("Judul wajib diisi.");
-      return;
-    }
-
-    if (!form.date) {
-      setErr("Tanggal wajib diisi.");
-      return;
-    }
+    if (!form.title.trim()) return setErr("Judul wajib diisi.");
+    if (!form.date) return setErr("Tanggal wajib diisi.");
 
     try {
       setSaving(true);
@@ -139,16 +134,10 @@ export default function AdminKegiatan() {
       setInfo("");
 
       const payload = {
+        ...form,
         title: form.title.trim(),
-        category: form.category || "Lainnya",
-        date: form.date,
-        startTime: form.startTime.trim(),
-        endTime: form.endTime.trim(),
-        location: form.location.trim() || "Masjid Kagawa",
         description: form.description.trim(),
-        imageUrl: form.imageUrl || "",
-        isPublished: !!form.isPublished,
-        isFeatured: !!form.isFeatured,
+        location: form.location.trim(),
       };
 
       if (editId) {
@@ -159,9 +148,8 @@ export default function AdminKegiatan() {
         setInfo("Kegiatan berhasil ditambahkan.");
       }
 
-      setEditId("");
-      setForm(EMPTY_FORM);
-      await fetchItems();
+      resetForm();
+      fetchItems();
     } catch (e) {
       console.error(e);
       setErr(e?.response?.data?.msg || "Gagal menyimpan kegiatan.");
@@ -173,64 +161,34 @@ export default function AdminKegiatan() {
   const remove = async (id) => {
     if (!window.confirm("Hapus kegiatan ini?")) return;
 
-    try {
-      setErr("");
-      setInfo("");
-
-      await http.delete(`${API_BASE}/${id}`, { headers });
-      setInfo("Kegiatan berhasil dihapus.");
-
-      if (editId === id) resetForm();
-      await fetchItems();
-    } catch (e) {
-      console.error(e);
-      setErr(e?.response?.data?.msg || "Gagal menghapus kegiatan.");
-    }
+    await http.delete(`${API_BASE}/${id}`, { headers });
+    fetchItems();
   };
 
   const togglePublish = async (item) => {
-    try {
-      setErr("");
-      setInfo("");
-
-      await http.put(
-        `${API_BASE}/${item._id}`,
-        { isPublished: !item.isPublished },
-        { headers }
-      );
-
-      setInfo(item.isPublished ? "Kegiatan dijadikan draft." : "Kegiatan dipublikasikan.");
-      await fetchItems();
-    } catch (e) {
-      console.error(e);
-      setErr("Gagal mengubah status publish.");
-    }
+    await http.put(
+      `${API_BASE}/${item.id}`,
+      { isPublished: !item.isPublished },
+      { headers }
+    );
+    fetchItems();
   };
 
   const toggleFeatured = async (item) => {
-    try {
-      setErr("");
-      setInfo("");
-
-      await http.put(
-        `${API_BASE}/${item._id}`,
-        { isFeatured: !item.isFeatured },
-        { headers }
-      );
-
-      setInfo(item.isFeatured ? "Kegiatan dihapus dari pilihan." : "Kegiatan dijadikan pilihan.");
-      await fetchItems();
-    } catch (e) {
-      console.error(e);
-      setErr("Gagal mengubah status pilihan.");
-    }
+    await http.put(
+      `${API_BASE}/${item.id}`,
+      { isFeatured: !item.isFeatured },
+      { headers }
+    );
+    fetchItems();
   };
 
   return (
-    <AdminLayout title="Kelola Kegiatan">
+    <AdminLayout title="Kegiatan">
       <div className="admin-page admin-kegiatan-page">
+
         <div className="admin-toolbar">
-          <div className="admin-toolbar-left">
+          <div>
             <h2>Kelola Kegiatan</h2>
             <div className="admin-muted">
               Tambah, edit, publish, dan tandai kegiatan pilihan untuk homepage.
@@ -239,16 +197,14 @@ export default function AdminKegiatan() {
         </div>
 
         {(err || info) && (
-          <div
-            className={`admin-kegiatan__notice ${
-              err ? "admin-kegiatan__notice--error" : "admin-kegiatan__notice--success"
-            }`}
-          >
+          <div className={`admin-kegiatan__notice ${err ? "admin-kegiatan__notice--error" : "admin-kegiatan__notice--success"}`}>
             {err || info}
           </div>
         )}
 
         <div className="admin-kegiatan__grid">
+
+          {/* FORM */}
           <section className="admin-card admin-kegiatan__form-card">
             <div className="admin-card-header">
               <div>
@@ -263,11 +219,10 @@ export default function AdminKegiatan() {
 
             <div className="admin-card-body">
               <form className="admin-kegiatan__form" onSubmit={submit}>
+
                 <label>
                   Judul
                   <input
-                    type="text"
-                    placeholder="Contoh: Bersih-Bersih Masjid Kagawa"
                     value={form.title}
                     onChange={(e) => onChange("title", e.target.value)}
                   />
@@ -283,10 +238,8 @@ export default function AdminKegiatan() {
                 <label>
                   Deskripsi
                   <textarea
-                    placeholder="Tulis ringkasan kegiatan..."
                     value={form.description}
                     onChange={(e) => onChange("description", e.target.value)}
-                    rows={6}
                   />
                 </label>
 
@@ -298,9 +251,7 @@ export default function AdminKegiatan() {
                       onChange={(e) => onChange("category", e.target.value)}
                     >
                       {ACTIVITY_CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
+                        <option key={cat}>{cat}</option>
                       ))}
                     </select>
                   </label>
@@ -338,8 +289,6 @@ export default function AdminKegiatan() {
                 <label>
                   Lokasi
                   <input
-                    type="text"
-                    placeholder="Contoh: Masjid Kagawa"
                     value={form.location}
                     onChange={(e) => onChange("location", e.target.value)}
                   />
@@ -366,41 +315,25 @@ export default function AdminKegiatan() {
                 </div>
 
                 <div className="admin-actions">
-                  <button
-                    className="admin-btn admin-btn-primary"
-                    type="submit"
-                    disabled={saving}
-                  >
+                  <button className="admin-btn admin-btn-primary">
                     {saving ? "Menyimpan..." : editId ? "Simpan Perubahan" : "Tambah Kegiatan"}
                   </button>
-
-                  {editId && (
-                    <button
-                      className="admin-btn admin-btn-ghost"
-                      type="button"
-                      onClick={resetForm}
-                      disabled={saving}
-                    >
-                      Batal
-                    </button>
-                  )}
                 </div>
+
               </form>
             </div>
           </section>
 
+          {/* LIST */}
           <section className="admin-card admin-kegiatan__list-card">
+
             <div className="admin-card-header admin-list-toolbar">
               <div>
                 <p className="admin-card-title">Daftar Kegiatan</p>
-                <p className="admin-card-subtitle">
-                  Kelola status publish dan pilihan homepage dengan cepat.
-                </p>
               </div>
 
               <div className="admin-list-controls">
                 <input
-                  type="text"
                   placeholder="Cari judul..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -418,18 +351,21 @@ export default function AdminKegiatan() {
             </div>
 
             <div className="admin-card-body">
+
               {loading ? (
-                <p className="admin-muted">Memuat daftar…</p>
+                <p className="admin-muted">Memuat...</p>
               ) : filteredItems.length === 0 ? (
-                <p className="admin-muted">Tidak ada kegiatan yang cocok.</p>
+                <p className="admin-muted">Tidak ada kegiatan.</p>
               ) : (
                 <ul className="admin-list">
                   {filteredItems.map((it) => (
-                    <li key={it._id} className="admin-list-item">
+                    <li key={it.id} className="admin-list-item">
+
                       <div className="admin-item-main">
+
                         {it.imageUrl && (
                           <div className="admin-item-thumb">
-                            <img src={it.imageUrl} alt={it.title || "Kegiatan"} />
+                            <img src={it.imageUrl} alt="" />
                           </div>
                         )}
 
@@ -437,70 +373,39 @@ export default function AdminKegiatan() {
                           <div className="admin-item-title">{it.title}</div>
 
                           <div className="admin-item-meta">
-                            <span className="admin-pill">{it.category || "-"}</span>
+                            <span className="admin-pill">{it.category}</span>
                             <span className="admin-pill">
-                              {it.date ? String(it.date).slice(0, 10) : "-"}
+                              {String(it.date).slice(0, 10)}
                             </span>
 
                             {it.startTime && (
                               <span className="admin-pill">
-                                {it.startTime}
-                                {it.endTime ? ` - ${it.endTime}` : ""}
+                                {it.startTime} - {it.endTime}
                               </span>
                             )}
 
-                            <span
-                              className={`admin-pill admin-pill--status ${
-                                it.isPublished ? "is-published" : "is-draft"
-                              }`}
-                            >
+                            <span className={`admin-pill admin-pill--status ${it.isPublished ? "is-published" : "is-draft"}`}>
                               {it.isPublished ? "Published" : "Draft"}
                             </span>
-
-                            {it.isFeatured && (
-                              <span className="admin-pill admin-pill--featured">
-                                Pilihan
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>
 
                       <div className="admin-item-actions">
-                        <button className="admin-btn" type="button" onClick={() => startEdit(it)}>
-                          Edit
-                        </button>
-
-                        <button
-                          className="admin-btn admin-btn-ghost"
-                          type="button"
-                          onClick={() => togglePublish(it)}
-                        >
-                          {it.isPublished ? "Draft" : "Publish"}
-                        </button>
-
-                        <button
-                          className="admin-btn admin-btn-ghost"
-                          type="button"
-                          onClick={() => toggleFeatured(it)}
-                        >
-                          {it.isFeatured ? "Unfeature" : "Feature"}
-                        </button>
-
-                        <button
-                          className="admin-btn admin-btn-danger"
-                          type="button"
-                          onClick={() => remove(it._id)}
-                        >
-                          Hapus
-                        </button>
+                        <button className="admin-btn" onClick={() => startEdit(it)}>Edit</button>
+                        <button className="admin-btn admin-btn-ghost" onClick={() => togglePublish(it)}>Draft</button>
+                        <button className="admin-btn admin-btn-ghost" onClick={() => toggleFeatured(it)}>Feature</button>
+                        <button className="admin-btn admin-btn-danger" onClick={() => remove(it.id)}>Hapus</button>
                       </div>
+
                     </li>
                   ))}
                 </ul>
               )}
+
             </div>
           </section>
+
         </div>
       </div>
     </AdminLayout>

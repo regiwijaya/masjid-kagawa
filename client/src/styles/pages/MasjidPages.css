@@ -1,4 +1,17 @@
 /* ======================================
+   GLOBAL CONTAINER SYSTEM (NEW)
+====================================== */
+
+/* Ini wrapper utama untuk semua section */
+.home-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ======================================
    HOME PRAYER SECTION — SIMPLE VERSION
 ====================================== */
 
@@ -91,11 +104,24 @@
   position: relative;
 }
 
-.home-activity-section,
+/* 🔥 KEY FIX: section jadi center & tidak full */
 .home-announcement-section {
-  padding-block: 68px;
-  padding-bottom: 40px;
+  padding-block: 60px;
 }
+
+.home-activity-section {
+  padding-block: 60px;
+}
+
+/* stack tetap, tapi rapi di tengah */
+.home-announcement-stack {
+  display: grid;
+  gap: 28px;
+}
+
+/* ======================================
+   TYPOGRAPHY & HEADER
+====================================== */
 
 .home-section-head {
   display: flex;
@@ -155,29 +181,8 @@
   margin-right: auto;
 }
 
-.home-activity-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.home-activity-grid__item {
-  min-width: 0;
-}
-
-.home-section-cta {
-  display: flex;
-  justify-content: center;
-  margin-top: 26px;
-}
-
-.home-announcement-stack {
-  display: grid;
-  gap: 28px;
-}
-
 /* ======================================
-   KEGIATAN DETAIL PAGE
+   DETAIL PAGE (UNCHANGED)
 ====================================== */
 
 .detail-page-section {
@@ -190,299 +195,24 @@
   margin: 0 auto;
 }
 
-.detail-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 18px;
-  color: var(--masjid-green);
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.22s ease;
-}
-
-.detail-back-link:hover {
-  color: var(--masjid-green-dark);
-  transform: translateX(-2px);
-}
-
-.detail-article-card {
-  background: #ffffff;
-  border: 1px solid rgba(17, 57, 35, 0.08);
-  border-radius: 26px;
-  overflow: hidden;
-  box-shadow:
-    0 18px 44px rgba(13, 36, 24, 0.07),
-    0 4px 14px rgba(13, 36, 24, 0.03);
-}
-
-.detail-media-wrap {
-  width: 100%;
-  aspect-ratio: 16 / 8.5;
-  background: #eef4f0;
-  overflow: hidden;
-}
-
-.detail-media-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.detail-article-body {
-  padding: 28px 28px 30px;
-}
-
-.detail-meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-
-.detail-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: rgba(19, 111, 65, 0.10);
-  color: var(--masjid-green);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.detail-date {
-  font-size: 0.88rem;
-  color: #6f8379;
-  font-weight: 600;
-}
-
-.detail-title {
-  margin: 0;
-  font-size: clamp(1.9rem, 4vw, 2.8rem);
-  line-height: 1.12;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: #103524;
-}
-
-.detail-divider {
-  width: 100%;
-  height: 1px;
-  margin: 20px 0 22px;
-  background: rgba(17, 57, 35, 0.08);
-}
-
-.detail-content p {
-  margin: 0;
-  white-space: pre-line;
-  font-size: 1rem;
-  line-height: 1.9;
-  color: #50655b;
-}
-
-/* ======================================
-   DETAIL STATE
-====================================== */
-
-.detail-state-card {
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 14px;
-  padding: 28px;
-  border-radius: 22px;
-  background: #fbfcfb;
-  border: 1px solid rgba(17, 57, 35, 0.06);
-  box-shadow: 0 10px 26px rgba(13, 36, 24, 0.04);
-}
-
-.detail-state-card p {
-  margin: 0;
-  font-size: 0.98rem;
-  color: #5b6f65;
-}
-
-.detail-state-card--error p {
-  color: #b42318;
-}
-
-.detail-location {
-  margin-top: 14px;
-  font-size: 0.96rem;
-  line-height: 1.7;
-  color: #50655b;
-}
-
-
-
 /* ======================================
    RESPONSIVE
 ====================================== */
 
-@media (max-width: 992px) {
-  .home-activity-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-activity-section,
-  .home-announcement-section {
-    padding-block: 56px;
-  }
-}
-
 @media (max-width: 768px) {
-  .home-prayer-section--simple {
-    padding-top: 34px;
-    padding-bottom: 34px;
+  .home-shell {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
-  .home-prayer-simple {
-    padding: 18px 16px;
-    border-radius: 18px;
-  }
-
-  .home-prayer-simple__head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .home-prayer-simple__title {
-    font-size: 1.34rem;
-    line-height: 1.12;
-  }
-
-  .home-prayer-simple__meta {
-    margin-top: 6px;
-    font-size: 0.76rem;
-    gap: 4px 10px;
-  }
-
-  .home-prayer-simple__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .home-inline-link--soft {
-    width: auto;
-    text-align: center;
-    justify-content: center;
-    padding: 10px 14px;
-    font-size: 0.84rem;
-  }
-
-  .home-section-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .home-eyebrow {
-    margin-bottom: 10px;
-    font-size: 0.7rem;
-    padding: 7px 11px;
-  }
-
-  .home-section-title {
-    font-size: 1.56rem;
-    line-height: 1.14;
-  }
-
-  .home-section-title--large {
-    font-size: 1.68rem;
-  }
-
-  .home-section-subtext {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    line-height: 1.68;
-  }
-
-  .home-activity-section,
   .home-announcement-section {
     padding-block: 44px;
-    padding-bottom: 28px;
-  }
-
-  .home-section-cta {
-    margin-top: 20px;
   }
 
   .home-announcement-stack {
     gap: 22px;
   }
 
-   .detail-page-section {
-    padding: 36px 0 52px;
-  }
-
-  .detail-back-link {
-    margin-bottom: 14px;
-    font-size: 0.86rem;
-  }
-
-  .detail-article-card {
-    border-radius: 18px;
-  }
-
-  .detail-media-wrap {
-    aspect-ratio: 16 / 10;
-  }
-
-  .detail-article-body {
-    padding: 18px 16px 20px;
-  }
-
-  .detail-badge {
-    font-size: 0.72rem;
-    padding: 6px 10px;
-  }
-
-  .detail-date {
-    font-size: 0.8rem;
-  }
-
-  .detail-title {
-    font-size: 1.54rem;
-    line-height: 1.16;
-  }
-
-  .detail-divider {
-    margin: 16px 0 16px;
-  }
-
-  .detail-content p {
-    font-size: 0.92rem;
-    line-height: 1.75;
-  }
-
-  .detail-state-card {
-    min-height: 160px;
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  .detail-state-card p {
-    font-size: 0.9rem;
-  }
-
-  .detail-location {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 420px) {
   .home-prayer-simple__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

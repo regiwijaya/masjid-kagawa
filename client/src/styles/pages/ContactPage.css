@@ -1,0 +1,74 @@
+.contact-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.contact-hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.contact-hero h1 {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.contact-types {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.contact-types button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.contact-types button.active {
+  background: #2563eb;
+  color: white;
+}
+
+.contact-form {
+  display: grid;
+  gap: 14px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.contact-form button {
+  margin-top: 10px;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 900;
+}
+
+.contact-quick {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.contact-quick a {
+  margin: 0 10px;
+  color: #2563eb;
+}

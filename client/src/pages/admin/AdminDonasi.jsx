@@ -9,17 +9,19 @@ const EMPTY_FORM = {
   bankJapanAccountName: "",
   bankJapanAccountNumber: "",
   bankJapanBranch: "",
-
   bankIndonesiaName: "",
   bankIndonesiaAccountName: "",
   bankIndonesiaAccountNumber: "",
   bankIndonesiaBranch: "",
-
   qrisImageUrl: "",
   donationNote: "",
   confirmationText: "",
   confirmationLink: "",
 };
+
+function getAdminToken() {
+  return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
+}
 
 export default function AdminDonasi() {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -28,9 +30,6 @@ export default function AdminDonasi() {
   const [err, setErr] = useState("");
   const [info, setInfo] = useState("");
 
-  // =========================
-  // LOAD DATA
-  // =========================
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -44,12 +43,10 @@ export default function AdminDonasi() {
         bankJapanAccountName: data.bankJapanAccountName || "",
         bankJapanAccountNumber: data.bankJapanAccountNumber || "",
         bankJapanBranch: data.bankJapanBranch || "",
-
         bankIndonesiaName: data.bankIndonesiaName || "",
         bankIndonesiaAccountName: data.bankIndonesiaAccountName || "",
         bankIndonesiaAccountNumber: data.bankIndonesiaAccountNumber || "",
         bankIndonesiaBranch: data.bankIndonesiaBranch || "",
-
         qrisImageUrl: data.qrisImageUrl || "",
         donationNote: data.donationNote || "",
         confirmationText: data.confirmationText || "",
@@ -67,16 +64,11 @@ export default function AdminDonasi() {
     loadData();
   }, [loadData]);
 
-  // =========================
-  // HANDLE CHANGE
-  // =========================
   const onChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  // =========================
-  // SUBMIT
-  // =========================
+  // 🔥 FINAL SUBMIT FIX + DEBUG
   const submit = async (e) => {
     e.preventDefault();
 
@@ -85,20 +77,47 @@ export default function AdminDonasi() {
       setErr("");
       setInfo("");
 
-      // ❗ TIDAK pakai headers manual
-      await http.put("/api/donation-settings", form);
+      const token = getAdminToken();
+
+      // ❗ VALIDASI TOKEN
+      if (!token) {
+        setErr("Token admin tidak ditemukan. Silakan login ulang.");
+        return;
+      }
+
+      const payload = {
+        ...form,
+        qrisImageUrl:
+          typeof form.qrisImageUrl === "string"
+            ? form.qrisImageUrl
+            : form.qrisImageUrl?.imageUrl || "",
+      };
+
+      console.log("PAYLOAD SENT:", payload);
+
+      const res = await http.put("/api/donation-settings", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("SUCCESS RESPONSE:", res.data);
 
       setInfo("Pengaturan donasi berhasil diperbarui.");
       await loadData();
     } catch (e) {
-      console.error("SAVE DONATION ERROR:", e);
+      console.error("SAVE DONATION ERROR FULL:", e);
+      console.error("RESPONSE:", e?.response);
+
+      // 🔥 DEBUG ERROR ASLI
+      const backendMsg = e?.response?.data?.msg;
 
       if (e?.response?.status === 401) {
-        setErr("Session habis. Silakan login ulang.");
+        setErr("Unauthorized. Login admin tidak valid.");
       } else {
         setErr(
-          e?.response?.data?.msg ||
-            "Gagal menyimpan pengaturan donasi. Pastikan login admin masih aktif."
+          backendMsg ||
+          "Gagal menyimpan pengaturan. Lihat console."
         );
       }
     } finally {
@@ -109,11 +128,12 @@ export default function AdminDonasi() {
   return (
     <AdminLayout title="Kelola Donasi">
       <div className="admin-page admin-donasi-page">
+
         <div className="admin-toolbar">
           <div className="admin-toolbar-left">
             <h2>Kelola Donasi</h2>
             <div className="admin-muted">
-              Atur rekening donasi Jepang, rekening Indonesia, QRIS, dan link konfirmasi donasi.
+              Atur rekening donasi Jepang, Indonesia, QRIS, dan konfirmasi.
             </div>
           </div>
         </div>
@@ -130,183 +150,74 @@ export default function AdminDonasi() {
 
         <form className="admin-donasi__layout" onSubmit={submit}>
           <div className="admin-donasi__grid">
-            {/* ========================= */}
-            {/* REKENING JEPANG */}
-            {/* ========================= */}
+
             <section className="admin-card">
               <div className="admin-card-header">
-                <div>
-                  <p className="admin-card-title">Rekening Jepang</p>
-                  <p className="admin-card-subtitle">
-                    Informasi transfer untuk donatur di Jepang.
-                  </p>
-                </div>
+                <p className="admin-card-title">Rekening Jepang</p>
               </div>
 
               <div className="admin-card-body admin-donasi__form">
-                <label>
-                  Nama Bank
-                  <input
-                    value={form.bankJapanName}
-                    onChange={(e) => onChange("bankJapanName", e.target.value)}
-                  />
-                </label>
-
-                <label>
-                  Cabang / Kode
-                  <input
-                    value={form.bankJapanBranch}
-                    onChange={(e) => onChange("bankJapanBranch", e.target.value)}
-                  />
-                </label>
-
-                <label>
-                  Nomor Rekening
-                  <input
-                    value={form.bankJapanAccountNumber}
-                    onChange={(e) =>
-                      onChange("bankJapanAccountNumber", e.target.value)
-                    }
-                  />
-                </label>
-
-                <label>
-                  Atas Nama
-                  <input
-                    value={form.bankJapanAccountName}
-                    onChange={(e) =>
-                      onChange("bankJapanAccountName", e.target.value)
-                    }
-                  />
-                </label>
+                <input value={form.bankJapanName} onChange={(e)=>onChange("bankJapanName",e.target.value)} placeholder="Nama Bank"/>
+                <input value={form.bankJapanBranch} onChange={(e)=>onChange("bankJapanBranch",e.target.value)} placeholder="Cabang"/>
+                <input value={form.bankJapanAccountNumber} onChange={(e)=>onChange("bankJapanAccountNumber",e.target.value)} placeholder="Nomor"/>
+                <input value={form.bankJapanAccountName} onChange={(e)=>onChange("bankJapanAccountName",e.target.value)} placeholder="Atas Nama"/>
               </div>
             </section>
 
-            {/* ========================= */}
-            {/* REKENING INDONESIA */}
-            {/* ========================= */}
             <section className="admin-card">
               <div className="admin-card-header">
-                <div>
-                  <p className="admin-card-title">Rekening Indonesia</p>
-                  <p className="admin-card-subtitle">
-                    Informasi transfer untuk donatur dari Indonesia.
-                  </p>
-                </div>
+                <p className="admin-card-title">Rekening Indonesia</p>
               </div>
 
               <div className="admin-card-body admin-donasi__form">
-                <label>
-                  Nama Bank
-                  <input
-                    value={form.bankIndonesiaName}
-                    onChange={(e) =>
-                      onChange("bankIndonesiaName", e.target.value)
-                    }
-                  />
-                </label>
-
-                <label>
-                  Cabang
-                  <input
-                    value={form.bankIndonesiaBranch}
-                    onChange={(e) =>
-                      onChange("bankIndonesiaBranch", e.target.value)
-                    }
-                  />
-                </label>
-
-                <label>
-                  Nomor Rekening
-                  <input
-                    value={form.bankIndonesiaAccountNumber}
-                    onChange={(e) =>
-                      onChange("bankIndonesiaAccountNumber", e.target.value)
-                    }
-                  />
-                </label>
-
-                <label>
-                  Atas Nama
-                  <input
-                    value={form.bankIndonesiaAccountName}
-                    onChange={(e) =>
-                      onChange("bankIndonesiaAccountName", e.target.value)
-                    }
-                  />
-                </label>
+                <input value={form.bankIndonesiaName} onChange={(e)=>onChange("bankIndonesiaName",e.target.value)} placeholder="Nama Bank"/>
+                <input value={form.bankIndonesiaBranch} onChange={(e)=>onChange("bankIndonesiaBranch",e.target.value)} placeholder="Cabang"/>
+                <input value={form.bankIndonesiaAccountNumber} onChange={(e)=>onChange("bankIndonesiaAccountNumber",e.target.value)} placeholder="Nomor"/>
+                <input value={form.bankIndonesiaAccountName} onChange={(e)=>onChange("bankIndonesiaAccountName",e.target.value)} placeholder="Atas Nama"/>
               </div>
             </section>
+
           </div>
 
-          {/* ========================= */}
-          {/* QRIS */}
-          {/* ========================= */}
           <section className="admin-card admin-donasi__full">
             <div className="admin-card-header">
-              <div>
-                <p className="admin-card-title">QRIS & Instruksi Donasi</p>
-                <p className="admin-card-subtitle">
-                  Tampilkan QRIS dan instruksi donasi.
-                </p>
-              </div>
+              <p className="admin-card-title">QRIS</p>
             </div>
 
             <div className="admin-card-body admin-donasi__form">
               <AdminImageUploader
                 type="donation"
-                label="Gambar QRIS"
+                label="QRIS"
                 value={form.qrisImageUrl}
-                onChange={(url) => onChange("qrisImageUrl", url)}
+                onChange={(url)=>onChange("qrisImageUrl",url)}
               />
 
-              <label>
-                Catatan Donasi
-                <textarea
-                  rows={5}
-                  value={form.donationNote}
-                  onChange={(e) =>
-                    onChange("donationNote", e.target.value)
-                  }
-                />
-              </label>
+              <textarea
+                value={form.donationNote}
+                onChange={(e)=>onChange("donationNote",e.target.value)}
+                placeholder="Catatan donasi"
+              />
 
-              <div className="admin-donasi__row">
-                <label>
-                  Teks Konfirmasi
-                  <input
-                    value={form.confirmationText}
-                    onChange={(e) =>
-                      onChange("confirmationText", e.target.value)
-                    }
-                  />
-                </label>
+              <input
+                value={form.confirmationText}
+                onChange={(e)=>onChange("confirmationText",e.target.value)}
+                placeholder="Teks konfirmasi"
+              />
 
-                <label>
-                  Link Konfirmasi
-                  <input
-                    value={form.confirmationLink}
-                    onChange={(e) =>
-                      onChange("confirmationLink", e.target.value)
-                    }
-                  />
-                </label>
-              </div>
+              <input
+                value={form.confirmationLink}
+                onChange={(e)=>onChange("confirmationLink",e.target.value)}
+                placeholder="Link konfirmasi"
+              />
             </div>
           </section>
 
-          {/* ========================= */}
-          {/* BUTTON */}
-          {/* ========================= */}
           <div className="admin-actions admin-donasi__actions">
-            <button
-              className="admin-btn admin-btn-primary"
-              type="submit"
-              disabled={saving || loading}
-            >
-              {saving ? "Menyimpan..." : "Simpan Pengaturan Donasi"}
+            <button className="admin-btn admin-btn-primary" type="submit">
+              {saving ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
+
         </form>
       </div>
     </AdminLayout>

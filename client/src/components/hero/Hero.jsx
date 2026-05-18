@@ -92,17 +92,7 @@ export default function Hero() {
       try {
         const res = await http.get("/api/prayer");
 
-        setAdzan(
-          res?.data?.adzan || {
-            subuh: "-",
-            syuruq: "-",
-            zuhur: "-",
-            asar: "-",
-            maghrib: "-",
-            isya: "-",
-          }
-        );
-
+        setAdzan(res?.data?.adzan || {});
         setPrayerMeta({
           location: res?.data?.location || "Masjid Kagawa",
           date: res?.data?.date || "",
@@ -160,7 +150,6 @@ export default function Hero() {
 
     if (tomorrowSubuh) {
       tomorrowSubuh.setDate(tomorrowSubuh.getDate() + 1);
-
       return {
         name: "Subuh",
         time: adzan.subuh,
@@ -178,7 +167,7 @@ export default function Hero() {
   const countdown = formatCountdown(nextPrayer.target - now.getTime());
 
   return (
-    <header className="hero-section hero-rotating">
+    <header id="home-hero" className="hero-section hero-rotating">
       <div
         className="hero-bg hero-bg--prev"
         style={{ backgroundImage: `url(${prev})` }}
@@ -193,7 +182,9 @@ export default function Hero() {
 
       <div className="site-shell">
         <div className="hero-content">
-          <span className="hero-badge">Keluarga Muslim Indonesia Kagawa</span>
+          <span className="hero-badge">
+            Keluarga Muslim Indonesia Kagawa
+          </span>
 
           <h1 className="hero-title">
             Masjid Kagawa
@@ -228,11 +219,16 @@ export default function Hero() {
               <div className="hero-next-divider" />
 
               <div className="hero-next-countdown">
-                <div className="hero-next-countdown-label">Adzan dalam</div>
-                <div className="hero-next-countdown-value">{countdown}</div>
+                <div className="hero-next-countdown-label">
+                  Adzan dalam
+                </div>
+                <div className="hero-next-countdown-value">
+                  {countdown}
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </header>

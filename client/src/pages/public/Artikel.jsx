@@ -32,7 +32,11 @@ export default function Artikel() {
         setError("");
 
         const res = await http.get("/api/posts");
-        setPosts(Array.isArray(res.data) ? res.data : []);
+
+        const data = Array.isArray(res.data) ? res.data : [];
+
+        // ✅ FILTER: hanya yang punya slug (biar aman ke detail)
+        setPosts(data.filter((p) => p.slug));
       } catch (err) {
         console.error(err);
         setError("Artikel belum dapat dimuat.");
@@ -76,6 +80,7 @@ export default function Artikel() {
             </p>
           </div>
 
+          {/* FILTER */}
           {!loading && !error && categories.length > 1 && (
             <div className="artikel-filter">
               {categories.map((item) => (
@@ -93,6 +98,7 @@ export default function Artikel() {
             </div>
           )}
 
+          {/* STATE */}
           {loading ? (
             <div className="artikel-state">Memuat artikel...</div>
           ) : error ? (
@@ -102,8 +108,12 @@ export default function Artikel() {
           ) : (
             <div className="artikel-grid">
               {filteredPosts.map((post) => (
-                <article key={post._id} className="artikel-card">
-                  <Link to={`/artikel/${post.slug}`} className="artikel-card__media">
+                <article key={post.id} className="artikel-card">
+                  {/* IMAGE */}
+                  <Link
+                    to={`/artikel/${post.slug}`}
+                    className="artikel-card__media"
+                  >
                     <img
                       src={post.imageUrl || placeholder}
                       alt={post.title}
@@ -113,6 +123,7 @@ export default function Artikel() {
                     />
                   </Link>
 
+                  {/* BODY */}
                   <div className="artikel-card__body">
                     <div className="artikel-card__meta">
                       <span className="artikel-card__badge">
@@ -130,7 +141,8 @@ export default function Artikel() {
                     </h3>
 
                     <p className="artikel-card__excerpt">
-                      {post.excerpt || "Ringkasan artikel belum tersedia."}
+                      {post.excerpt ||
+                        "Ringkasan artikel belum tersedia."}
                     </p>
 
                     <div className="artikel-card__footer">

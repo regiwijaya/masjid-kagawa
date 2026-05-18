@@ -132,7 +132,7 @@ export default function AdminImageUploader({
         throw new Error(data?.msg || "Upload gagal");
       }
 
-      onChange?.(data.imageUrl);
+      onChange?.(String(data.imageUrl || ""));
       setMessage("Upload berhasil");
       resetCrop();
     } catch (err) {

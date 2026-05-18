@@ -1,11 +1,15 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-// COMMON COMPONENTS
-import Navbar from "./components/common/Navbar";
+// COMPONENTS
+import Topbar from "./components/common/Topbar";
 import Footer from "./components/common/Footer";
+import RouteProgress from "./components/common/RouteProgress"; // ✅ TAMBAHAN AMAN
 
-// PUBLIC PAGES
+// LAYOUT
+import PublicLayout from "./layouts/PublicLayout";
+
+// PUBLIC
 import Home from "./pages/public/Home";
 import JadwalShalat from "./pages/public/JadwalShalat";
 import Pengumuman from "./pages/public/Pengumuman";
@@ -18,8 +22,9 @@ import KajianMingguIni from "./pages/public/KajianMingguIni";
 import KajianDetail from "./pages/public/KajianDetail";
 import Artikel from "./pages/public/Artikel";
 import ArtikelDetail from "./pages/public/ArtikelDetail";
+import ContactPage from "./pages/public/ContactPage";
 
-// ADMIN PAGES
+// ADMIN
 import RegisterAdmin from "./pages/admin/RegisterAdmin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -53,30 +58,34 @@ function App() {
 
   return (
     <>
-      {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && <Topbar />}
+
+      {/* ✅ PROGRESS BAR — TIDAK MENGGANGGU APAPUN */}
+      {!isAdminRoute && <RouteProgress />}
 
       <Routes>
         {/* PUBLIC */}
-        <Route path="/" element={<Home />} />
-        <Route path="/jadwal" element={<JadwalShalat />} />
-        <Route path="/pengumuman" element={<Pengumuman />} />
-        <Route path="/pengumuman/:id" element={<PengumumanDetail />} />
-        <Route path="/tentang" element={<TentangMasjid />} />
-        <Route path="/donasi" element={<Donasi />} />
-        <Route path="/kajian" element={<KajianMingguIni />} />
-        <Route path="/kajian/:id" element={<KajianDetail />} />
-        <Route path="/kegiatan" element={<KegiatanMasjid />} />
-        <Route path="/kegiatan/:id" element={<KegiatanDetail />} />
-        <Route path="/artikel" element={<Artikel />} />
-        <Route path="/artikel/:slug" element={<ArtikelDetail />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/jadwal" element={<JadwalShalat />} />
+          <Route path="/pengumuman" element={<Pengumuman />} />
+          <Route path="/pengumuman/:id" element={<PengumumanDetail />} />
+          <Route path="/tentang" element={<TentangMasjid />} />
+          <Route path="/donasi" element={<Donasi />} />
+          <Route path="/kajian" element={<KajianMingguIni />} />
+          <Route path="/kajian/:id" element={<KajianDetail />} />
+          <Route path="/kegiatan" element={<KegiatanMasjid />} />
+          <Route path="/kegiatan/:id" element={<KegiatanDetail />} />
+          <Route path="/artikel" element={<Artikel />} />
+          <Route path="/artikel/:slug" element={<ArtikelDetail />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Route>
 
         {/* ADMIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<RegisterAdmin />} />
-
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
         <Route path="/admin/prayer" element={<AdminPrayer />} />
         <Route path="/admin/kegiatan" element={<AdminKegiatan />} />
         <Route path="/admin/pengumuman" element={<AdminPengumuman />} />

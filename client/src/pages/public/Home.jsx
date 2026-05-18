@@ -1,8 +1,12 @@
 import Hero from "../../components/hero/Hero";
+import Navbar from "../../components/common/Navbar";
+
 import PrayerTimesCard from "../../components/cards/PrayerTimesCard";
 import AnnouncementCarousel from "../../components/carousel/AnnouncementCarousel";
-import HomeHighlights from "../../components/common/HomeHighlights"; // ✅ BARU
+import HomeHighlights from "../../components/common/HomeHighlights";
+
 import "../../styles/pages/MasjidPages.css";
+
 import { useEffect, useMemo, useState } from "react";
 
 export default function Home() {
@@ -34,7 +38,9 @@ export default function Home() {
 
     async function loadPrayerTimes() {
       try {
-        const res = await fetch("/api/prayer", { signal: controller.signal });
+        const res = await fetch("/api/prayer", {
+          signal: controller.signal,
+        });
         const data = await res.json().catch(() => ({}));
 
         if (res.ok) {
@@ -84,14 +90,21 @@ export default function Home() {
 
   return (
     <>
+      {/* 🔥 HERO FULL */}
       <Hero />
 
+      {/* 🔥 NAVBAR DI BAWAH HERO */}
+      <Navbar />
+
+      {/* 🔥 CONTENT */}
       <section className="home-section home-prayer-section home-prayer-section--simple">
         <div className="home-shell">
           <div className="home-prayer-simple">
             <div className="home-prayer-simple__head">
               <div className="home-prayer-simple__title-wrap">
-                <h2 className="home-prayer-simple__title">Jadwal Shalat</h2>
+                <h2 className="home-prayer-simple__title">
+                  Jadwal Shalat
+                </h2>
 
                 <div className="home-prayer-simple__meta">
                   <span>{prayerMeta.location}</span>
@@ -99,7 +112,10 @@ export default function Home() {
                 </div>
               </div>
 
-              <a href="/jadwal" className="home-inline-link home-inline-link--soft">
+              <a
+                href="/jadwal"
+                className="home-inline-link home-inline-link--soft"
+              >
                 Lihat Jadwal Lengkap
               </a>
             </div>
@@ -123,7 +139,7 @@ export default function Home() {
         <div className="home-shell">
           <div className="home-announcement-stack">
             <AnnouncementCarousel />
-            <HomeHighlights /> {/* ✅ GANTI DI SINI */}
+            <HomeHighlights />
           </div>
         </div>
       </section>
