@@ -49,7 +49,6 @@ export default function Navbar() {
           <li><NavLink to="/jadwal">Jadwal</NavLink></li>
           <li><NavLink to="/kegiatan">Kegiatan</NavLink></li>
           <li><NavLink to="/pengumuman">Pengumuman</NavLink></li>
-          <li><NavLink to="/kajian">Kajian</NavLink></li>
           <li><NavLink to="/artikel">Artikel</NavLink></li>
           <li><NavLink to="/donasi">Donasi</NavLink></li>
           <li><NavLink to="/tentang">Tentang</NavLink></li>

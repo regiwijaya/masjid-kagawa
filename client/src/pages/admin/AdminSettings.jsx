@@ -3,6 +3,8 @@ import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import http from "../../api/http";
 import "../../styles/admin/AdminSettings.css";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const DEFAULT_LEADERS = [
   { role: "Ketua", name: "", imageUrl: "", note: "" },
@@ -44,6 +46,54 @@ const tabs = [
   { key: "contact", label: "Kontak & Sosial" },
   { key: "leaders", label: "Pengurus" },
 ];
+
+// 🔥 IMAGE UPLOAD HANDLER
+const imageHandler = async function () {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await http.post("/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const imageUrl = res.data.url;
+
+      const quill = this.quill;
+      const range = quill.getSelection();
+
+      quill.insertEmbed(range.index, "image", imageUrl);
+    } catch (err) {
+      console.error("Upload gagal:", err);
+    }
+  };
+};
+
+// 🔥 QUILL CONFIG
+const quillModules = {
+  toolbar: {
+    container: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+    handlers: {
+      image: imageHandler,
+    },
+  },
+};
 
 export default function AdminSettings() {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -177,11 +227,11 @@ export default function AdminSettings() {
         imamDuty: form.imamDuty.trim(),
         muadzinDuty: form.muadzinDuty.trim(),
 
-        social: {
-          facebook: form.socialFacebook.trim(),
-          instagram: form.socialInstagram.trim(),
-          youtube: form.socialYoutube.trim(),
-        },
+      social: {
+        facebook: form.socialFacebook || "",
+        instagram: form.socialInstagram || "",
+        youtube: form.socialYoutube || "",
+              },
 
         leaders: form.leaders
           .map((item) => ({
@@ -318,14 +368,16 @@ export default function AdminSettings() {
                         onChange={(url) => onChange("historyImageUrl", url)}
                       />
 
-                      <label>
-                        Teks Sejarah
-                        <textarea
-                          rows={7}
-                          value={form.historyText}
-                          onChange={(e) => onChange("historyText", e.target.value)}
-                        />
-                      </label>
+                     <label>
+  Teks Sejarah
+  <ReactQuill
+    theme="snow"
+    value={form.historyText}
+    onChange={(value) => onChange("historyText", value)}
+    modules={quillModules}
+    className="admin-quill"
+  />
+</label>
                     </div>
                   </section>
 

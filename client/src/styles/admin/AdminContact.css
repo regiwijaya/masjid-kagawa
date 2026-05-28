@@ -1,0 +1,133 @@
+.admin-contact-page {
+  display: grid;
+  gap: 24px;
+}
+
+/* HEADER */
+.admin-contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-contact-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.admin-contact-header p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* SEARCH */
+.admin-contact-search input {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  min-width: 260px;
+  font-size: 0.9rem;
+}
+
+/* ERROR */
+.admin-error-box {
+  padding: 12px;
+  border-radius: 12px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+/* LIST */
+.admin-contact-list {
+  display: grid;
+  gap: 16px;
+}
+
+/* EMPTY */
+.admin-contact-empty {
+  padding: 30px;
+  text-align: center;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 14px;
+}
+
+/* CARD */
+.admin-contact-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+}
+
+/* TOP */
+.admin-contact-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.admin-contact-user strong {
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+/* BADGES */
+.admin-contact-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.badge-type {
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.badge-category {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* META */
+.admin-contact-meta {
+  margin-top: 8px;
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* MESSAGE */
+.admin-contact-message {
+  margin-top: 12px;
+  line-height: 1.7;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .admin-contact-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-contact-search input {
+    width: 100%;
+  }
+}

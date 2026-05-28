@@ -9,8 +9,8 @@ export default function TopBar() {
 
           <div className="lang-switch">
             <button>JP</button>
-            <button className="active">EN</button>
-            <button>ID</button>
+            <button className="active">ID</button>
+            <button>EN</button>
           </div>
 
           <span className="divider" />

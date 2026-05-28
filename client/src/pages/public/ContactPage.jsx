@@ -2,6 +2,9 @@ import { useState } from "react";
 import "../../styles/pages/ContactPage.css";
 import http from "../../api/http";
 
+// 🔥 TAMBAHAN
+import LocationCard from "../../components/common/LocationCard";
+
 const TYPES = [
   { key: "general", label: "Kontak Umum" },
   { key: "ustadz", label: "Tanya Ustadz" },
@@ -10,6 +13,7 @@ const TYPES = [
 
 export default function ContactPage() {
   const [type, setType] = useState("general");
+
   const [form, setForm] = useState({
     name: "",
     contact: "",
@@ -54,95 +58,139 @@ export default function ContactPage() {
 
   return (
     <div className="contact-page">
+      
+      {/* HERO */}
       <div className="contact-hero">
         <h1>Hubungi Kami</h1>
         <p>Kami siap membantu Anda</p>
       </div>
 
-      {/* TYPE SELECTOR */}
-      <div className="contact-types">
-        {TYPES.map((t) => (
-          <button
-            key={t.key}
-            className={type === t.key ? "active" : ""}
-            onClick={() => setType(t.key)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      {/* LAYOUT GRID */}
+      <div className="contact-layout">
 
-      {/* FORM */}
-      <form className="contact-form" onSubmit={submit}>
-        {/* NAME */}
-        {type !== "ustadz" && (
-          <label>
-            Nama
-            <input
-              value={form.name}
-              onChange={(e) => onChange("name", e.target.value)}
-            />
-          </label>
-        )}
+        {/* LEFT: FORM */}
+        <div className="contact-left">
 
-        {/* CONTACT */}
-        <label>
-          Email / WhatsApp
-          <input
-            value={form.contact}
-            onChange={(e) => onChange("contact", e.target.value)}
-          />
-        </label>
-
-        {/* USTADZ SPECIAL */}
-        {type === "ustadz" && (
-          <>
-            <label>
-              Kategori
-              <select
-                value={form.category}
-                onChange={(e) => onChange("category", e.target.value)}
+          {/* TYPE SELECTOR */}
+          <div className="contact-types">
+            {TYPES.map((t) => (
+              <button
+                key={t.key}
+                className={type === t.key ? "active" : ""}
+                onClick={() => setType(t.key)}
               >
-                <option>Aqidah</option>
-                <option>Fiqih</option>
-                <option>Ibadah</option>
-                <option>Kehidupan</option>
-              </select>
-            </label>
+                {t.label}
+              </button>
+            ))}
+          </div>
 
-            <label className="checkbox">
+          {/* FORM */}
+          <form className="contact-form" onSubmit={submit}>
+
+            {/* NAME */}
+            {type !== "ustadz" && (
+              <label>
+                Nama
+                <input
+                  value={form.name}
+                  onChange={(e) => onChange("name", e.target.value)}
+                />
+              </label>
+            )}
+
+            {/* CONTACT */}
+            <label>
+              Email / WhatsApp
               <input
-                type="checkbox"
-                checked={form.isAnonymous}
-                onChange={(e) => onChange("isAnonymous", e.target.checked)}
+                value={form.contact}
+                onChange={(e) => onChange("contact", e.target.value)}
               />
-              Kirim sebagai anonim
             </label>
-          </>
-        )}
 
-        {/* MESSAGE */}
-        <label>
-          Pesan
-          <textarea
-            rows={6}
-            value={form.message}
-            onChange={(e) => onChange("message", e.target.value)}
-          />
-        </label>
+            {/* USTADZ MODE */}
+            {type === "ustadz" && (
+              <>
+                <label>
+                  Kategori
+                  <select
+                    value={form.category}
+                    onChange={(e) => onChange("category", e.target.value)}
+                  >
+                    <option>Aqidah</option>
+                    <option>Fiqih</option>
+                    <option>Ibadah</option>
+                    <option>Kehidupan</option>
+                  </select>
+                </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Mengirim..." : "Kirim Pesan"}
-        </button>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={form.isAnonymous}
+                    onChange={(e) =>
+                      onChange("isAnonymous", e.target.checked)
+                    }
+                  />
+                  Kirim sebagai anonim
+                </label>
+              </>
+            )}
 
-        {msg && <p className="contact-msg">{msg}</p>}
-      </form>
+            {/* MESSAGE */}
+            <label>
+              Pesan
+              <textarea
+                rows={6}
+                value={form.message}
+                onChange={(e) => onChange("message", e.target.value)}
+              />
+            </label>
 
-      {/* QUICK CONTACT */}
-      <div className="contact-quick">
-        <p>Atau hubungi langsung:</p>
-        <a href="https://wa.me/your-number">WhatsApp</a>
-        <a href="mailto:your@email.com">Email</a>
+            <button type="submit" disabled={loading}>
+              {loading ? "Mengirim..." : "Kirim Pesan"}
+            </button>
+
+            {msg && <p className="contact-msg">{msg}</p>}
+          </form>
+
+        </div>
+          {/* QUICK CONTACT */}
+          <div className="contact-quick">
+            <p>Kontak Langsung</p>
+
+            <a href="https://wa.me/your-number">
+              WhatsApp
+            </a>
+
+            <a href="mailto:your@email.com">
+              Email
+            </a>
+          </div>
+
+        {/* RIGHT: INFO + MAP */}
+        <div className="contact-right">
+
+          {/* 🔥 LOCATION CARD */}
+          <LocationCard />
+
+          {/* 🔥 MAP */}
+          <div className="contact-map">
+            <iframe
+              title="Masjid Kagawa Map"
+              src="https://www.google.com/maps?q=Masjid+Kagawa&output=embed"
+              width="100%"
+              height="260"
+              style={{
+                border: 0,
+                borderRadius: "14px",
+              }}
+              loading="lazy"
+            />
+          </div>
+
+
+        </div>
+
       </div>
     </div>
   );

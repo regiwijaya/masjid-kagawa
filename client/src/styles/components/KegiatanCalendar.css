@@ -1,0 +1,190 @@
+/* =========================================
+   ENTERPRISE CALENDAR — MASJID UI SYSTEM
+========================================= */
+
+.calendar-enterprise {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* =========================================
+   REACT CALENDAR OVERRIDE
+========================================= */
+
+.react-calendar {
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(16, 53, 36, 0.08);
+  font-family: inherit;
+}
+
+/* navigation (bulan) */
+.react-calendar__navigation {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.react-calendar__navigation button {
+  min-width: 36px;
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  color: #103524;
+  font-size: 14px;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  background: rgba(19, 111, 65, 0.08);
+  border-radius: 8px;
+}
+
+/* weekday */
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a8c83;
+}
+
+/* day tile */
+.react-calendar__tile {
+  position: relative;
+  height: 52px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.react-calendar__tile:hover {
+  background: rgba(19, 111, 65, 0.08);
+}
+
+/* today */
+.react-calendar__tile--now {
+  background: rgba(19, 111, 65, 0.12);
+  font-weight: 700;
+}
+
+/* active (selected) */
+.react-calendar__tile--active {
+  background: #136f41 !important;
+  color: white;
+}
+
+/* =========================================
+   DOT MARKER (MULTI EVENT)
+========================================= */
+
+.calendar-dots {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.calendar-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+/* =========================================
+   RIGHT PANEL
+========================================= */
+
+.calendar-panel {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 57, 35, 0.06);
+  box-shadow: 0 12px 32px rgba(16, 53, 36, 0.06);
+}
+
+/* title */
+.calendar-panel h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #103524;
+}
+
+/* empty */
+.calendar-empty {
+  font-size: 14px;
+  color: #7a8c83;
+}
+
+/* =========================================
+   EVENT ITEM
+========================================= */
+
+.calendar-item {
+  display: block;
+  padding: 14px 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  text-decoration: none;
+  background: #f9fbfa;
+  border: 1px solid rgba(17, 57, 35, 0.05);
+  transition: all 0.22s ease;
+}
+
+.calendar-item:hover {
+  background: #eef4f0;
+  transform: translateY(-1px);
+}
+
+/* title */
+.calendar-item-title {
+  font-weight: 800;
+  color: #103524;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* meta */
+.calendar-item-meta {
+  font-size: 12.5px;
+  color: #6b7f76;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .calendar-enterprise {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .react-calendar {
+    padding: 12px;
+  }
+
+  .calendar-panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .react-calendar__tile {
+    height: 44px;
+  }
+
+  .calendar-panel h3 {
+    font-size: 16px;
+  }
+
+  .calendar-item {
+    padding: 12px;
+  }
+}

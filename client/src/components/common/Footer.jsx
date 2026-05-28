@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import "../../styles/components/Footer.css";
 import http from "../../api/http";
 
-const DEFAULT_MAP =
-  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3280.9540671465306!2d134.043!3d34.342!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDIwJzMxLjIiTiAxMzTCsDAyJzI5LjEiRQ!5e0!3m2!1sen!2sjp!4v00000000000";
-
 export default function Footer() {
   const [data, setData] = useState({
     footerDescription:
@@ -12,7 +9,6 @@ export default function Footer() {
     address: "Kagawa, Jepang",
     email: "",
     phone: "",
-    mapEmbedUrl: "",
     imamDuty: "",
     muadzinDuty: "",
     social: {
@@ -39,7 +35,6 @@ export default function Footer() {
           address: payload.address || "Kagawa, Jepang",
           email: payload.email || "",
           phone: payload.phone || "",
-          mapEmbedUrl: payload.mapEmbedUrl || "",
           imamDuty: payload.imamDuty || "",
           muadzinDuty: payload.muadzinDuty || "",
           social: {
@@ -61,110 +56,105 @@ export default function Footer() {
   }, []);
 
   return (
-    <>
-      <section className="footer-map-section">
-        <iframe
-          title="Masjid Location"
-          src={data.mapEmbedUrl || DEFAULT_MAP}
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-        ></iframe>
-      </section>
+    <footer className="footer-dark">
+      <div className="site-shell">
+        <div className="footer-grid">
 
-      <footer className="footer-dark">
-        <div className="site-shell">
-          <div className="footer-grid">
-            <div className="footer-col">
-              <h4 className="footer-brand-title">Masjid Kagawa</h4>
-              <p className="footer-description">{data.footerDescription}</p>
+          {/* BRAND */}
+          <div className="footer-col">
+            <h4 className="footer-brand-title">Masjid Kagawa</h4>
+            <p className="footer-description">{data.footerDescription}</p>
 
-              <div className="footer-socials">
-                {data.social.facebook && (
-                  <a href={data.social.facebook} className="social-icon" target="_blank" rel="noreferrer">
-                    <i className="bi bi-facebook"></i>
-                  </a>
-                )}
+            <div className="footer-socials">
+              {data.social.facebook && (
+                <a href={data.social.facebook} className="social-icon" target="_blank" rel="noreferrer">
+                  <i className="bi bi-facebook"></i>
+                </a>
+              )}
 
-                {data.social.instagram && (
-                  <a href={data.social.instagram} className="social-icon" target="_blank" rel="noreferrer">
-                    <i className="bi bi-instagram"></i>
-                  </a>
-                )}
+              {data.social.instagram && (
+                <a href={data.social.instagram} className="social-icon" target="_blank" rel="noreferrer">
+                  <i className="bi bi-instagram"></i>
+                </a>
+              )}
 
-                {data.social.youtube && (
-                  <a href={data.social.youtube} className="social-icon" target="_blank" rel="noreferrer">
-                    <i className="bi bi-youtube"></i>
-                  </a>
-                )}
-              </div>
-            </div>
-
-            <div className="footer-col">
-              <h5 className="footer-col-title">Navigasi</h5>
-              <ul className="footer-links">
-                <li><a href="/">Beranda</a></li>
-                <li><a href="/jadwal">Jadwal Shalat</a></li>
-                <li><a href="/kegiatan">Kegiatan Masjid</a></li>
-                <li><a href="/pengumuman">Pengumuman</a></li>
-                <li><a href="/kajian">Kajian</a></li>
-                <li><a href="/donasi">Donasi</a></li>
-                <li><a href="/tentang">Tentang Masjid</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-col">
-              <h5 className="footer-col-title">Kontak</h5>
-              <ul className="footer-contact-list">
-                {data.address && (
-                  <li>
-                    <i className="bi bi-geo-alt-fill"></i>
-                    <span>{data.address}</span>
-                  </li>
-                )}
-
-                {data.email && (
-                  <li>
-                    <i className="bi bi-envelope-fill"></i>
-                    <span>{data.email}</span>
-                  </li>
-                )}
-
-                {data.phone && (
-                  <li>
-                    <i className="bi bi-telephone-fill"></i>
-                    <span>{data.phone}</span>
-                  </li>
-                )}
-              </ul>
-
-              {(data.imamDuty || data.muadzinDuty) && (
-                <div className="footer-duty">
-                  {data.imamDuty && (
-                    <>
-                      <h6>Imam On-Duty</h6>
-                      <div className="badge-box">{data.imamDuty}</div>
-                    </>
-                  )}
-
-                  {data.muadzinDuty && (
-                    <>
-                      <h6>Muadzin On-Duty</h6>
-                      <div className="badge-box">{data.muadzinDuty}</div>
-                    </>
-                  )}
-                </div>
+              {data.social.youtube && (
+                <a href={data.social.youtube} className="social-icon" target="_blank" rel="noreferrer">
+                  <i className="bi bi-youtube"></i>
+                </a>
               )}
             </div>
           </div>
 
-          <div className="footer-bottom">
-            ©️ {new Date().getFullYear()} Masjid Kagawa — All Rights Reserved.
+          {/* NAV */}
+          <div className="footer-col">
+            <h5 className="footer-col-title">Navigasi</h5>
+            <ul className="footer-links">
+              <li><a href="/">Beranda</a></li>
+              <li><a href="/jadwal">Jadwal Shalat</a></li>
+              <li><a href="/kegiatan">Kegiatan</a></li>
+              <li><a href="/pengumuman">Pengumuman</a></li>
+              <li><a href="/artikel">Artikel</a></li>
+              <li><a href="/donasi">Donasi</a></li>
+              <li><a href="/tentang">Tentang</a></li>
+            </ul>
           </div>
+
+          {/* CONTACT */}
+          <div className="footer-col">
+            <h5 className="footer-col-title">Kontak</h5>
+            <ul className="footer-contact-list">
+
+              {data.address && (
+                <li>
+                  <i className="bi bi-geo-alt-fill"></i>
+                  <span>{data.address}</span>
+                </li>
+              )}
+
+              {data.email && (
+                <li>
+                  <i className="bi bi-envelope-fill"></i>
+                  <span>{data.email}</span>
+                </li>
+              )}
+
+              {data.phone && (
+                <li>
+                  <i className="bi bi-telephone-fill"></i>
+                  <span>{data.phone}</span>
+                </li>
+              )}
+
+            </ul>
+
+            {(data.imamDuty || data.muadzinDuty) && (
+              <div className="footer-duty">
+
+                {data.imamDuty && (
+                  <>
+                    <h6>Imam On-Duty</h6>
+                    <div className="badge-box">{data.imamDuty}</div>
+                  </>
+                )}
+
+                {data.muadzinDuty && (
+                  <>
+                    <h6>Muadzin On-Duty</h6>
+                    <div className="badge-box">{data.muadzinDuty}</div>
+                  </>
+                )}
+
+              </div>
+            )}
+          </div>
+
         </div>
-      </footer>
-    </>
+
+        <div className="footer-bottom">
+          ©️ {new Date().getFullYear()} Masjid Kagawa — All Rights Reserved.
+        </div>
+      </div>
+    </footer>
   );
 }

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import "../../styles/pages/MasjidPages.css";
 import http from "../../api/http";
 import placeholder from "../../assets/images/placeholder.svg";
 
-const API_BASE = "/api/kajian";
-
+// =========================
+// FORMAT DATE
+// =========================
 function formatDateLabel(dateString) {
   if (!dateString) return "-";
 
@@ -20,12 +21,26 @@ function formatDateLabel(dateString) {
   }).format(date);
 }
 
-export default function KajianDetail() {
+// =========================
+// COMPONENT
+// =========================
+export default function EventDetail() {
   const { id } = useParams();
-  const [kajian, setKajian] = useState(null);
+  const location = useLocation(); // 🔥 FIX: HARUS DI ATAS
+
+  // DEBUG (aman sekarang)
+  console.log("PARAM ID:", id);
+  console.log("FULL PATH:", location.pathname);
+
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
+  const API_BASE = "/api/activities";
+
+  // =========================
+  // FETCH DATA
+  // =========================
   useEffect(() => {
     let alive = true;
 
@@ -35,47 +50,57 @@ export default function KajianDetail() {
         setErr("");
 
         const res = await http.get(`${API_BASE}/${id}`);
-        const data = res.data;
+
+        console.log("DATA FROM API:", res.data);
 
         if (!alive) return;
-        setKajian(data);
+        setData(res.data);
       } catch (e) {
-        console.error(e);
+        console.error("DETAIL ERROR:", e);
         if (!alive) return;
-        setErr("Detail kajian tidak ditemukan atau gagal dimuat.");
+        setErr("Data tidak ditemukan atau gagal dimuat.");
       } finally {
         if (!alive) return;
         setLoading(false);
       }
     };
 
-    fetchDetail();
+    if (id) {
+      fetchDetail();
+    }
 
     return () => {
       alive = false;
     };
   }, [id]);
 
+  // =========================
+  // LOADING
+  // =========================
   if (loading) {
     return (
       <section className="detail-page-section">
         <div className="site-shell">
           <div className="detail-state-card">
-            <p>Memuat detail kajian…</p>
+            <p>Memuat detail...</p>
           </div>
         </div>
       </section>
     );
   }
 
+  // =========================
+  // ERROR
+  // =========================
   if (err) {
     return (
       <section className="detail-page-section">
         <div className="site-shell">
           <div className="detail-state-card detail-state-card--error">
             <p>{err}</p>
-            <Link to="/kajian" className="detail-back-link">
-              ← Kembali ke daftar kajian
+
+            <Link to="/kegiatan" className="detail-back-link">
+              ← Kembali
             </Link>
           </div>
         </div>
@@ -83,27 +108,59 @@ export default function KajianDetail() {
     );
   }
 
-  if (!kajian) return null;
+  // =========================
+  // EMPTY DATA (ANTI BLANK)
+  // =========================
+  if (!data) {
+    return (
+      <section className="detail-page-section">
+        <div className="site-shell">
+          <div className="detail-state-card">
+            <p>Data kosong (debug)</p>
 
-  const poster = kajian.imageUrl || placeholder;
-  const title = kajian.title || "Kajian";
-  const dateText = formatDateLabel(kajian.date);
-  const category = kajian.category || "Kajian";
-  const ustadz = kajian.ustadz || "";
-  const time = kajian.time || "";
-  const location = kajian.location || "";
+            <Link to="/kegiatan" className="detail-back-link">
+              ← Kembali
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // =========================
+  // NORMALIZE DATA (SAFE)
+  // =========================
+  const poster = data?.imageUrl || placeholder;
+  const title = data?.title || "Event";
+  const category = data?.category || "Kegiatan";
+  const dateText = formatDateLabel(data?.date);
+
+  const ustadz = data?.ustadz || "";
+  const time =
+    data?.time ||
+    (data?.startTime
+      ? `${data.startTime}${data.endTime ? " - " + data.endTime : ""}`
+      : "");
+
+  const locationText = data?.location || "";
   const desc =
-    kajian.description || "Informasi detail kajian akan segera diperbarui.";
+    data?.description || "Informasi detail akan segera diperbarui.";
 
+  // =========================
+  // RENDER
+  // =========================
   return (
     <section className="detail-page-section">
       <div className="site-shell">
         <div className="detail-page-wrap">
-          <Link to="/kajian" className="detail-back-link">
-            ← Kembali ke daftar kajian
+
+          <Link to="/kegiatan" className="detail-back-link">
+            ← Kembali
           </Link>
 
           <article className="detail-article-card">
+
+            {/* IMAGE */}
             <div className="detail-media-wrap">
               <img
                 src={poster}
@@ -115,39 +172,43 @@ export default function KajianDetail() {
               />
             </div>
 
+            {/* CONTENT */}
             <div className="detail-article-body">
+
               <div className="detail-meta-row">
                 <span className="detail-badge">{category}</span>
-                {dateText && <span className="detail-date">{dateText}</span>}
+                {dateText && (
+                  <span className="detail-date">{dateText}</span>
+                )}
               </div>
 
               <h1 className="detail-title">{title}</h1>
 
-              {(ustadz || time || location) && (
+              {(ustadz || time || locationText) && (
                 <div className="detail-info-box">
+
                   {ustadz && (
-                    <p>
-                      <strong>Ustadz:</strong> {ustadz}
-                    </p>
+                    <p><strong>Ustadz:</strong> {ustadz}</p>
                   )}
+
                   {time && (
-                    <p>
-                      <strong>Waktu:</strong> {time}
-                    </p>
+                    <p><strong>Waktu:</strong> {time}</p>
                   )}
-                  {location && (
-                    <p>
-                      <strong>Tempat:</strong> {location}
-                    </p>
+
+                  {locationText && (
+                    <p><strong>Tempat:</strong> {locationText}</p>
                   )}
+
                 </div>
               )}
 
               <div className="detail-divider"></div>
 
-              <div className="detail-content">
-                <p>{desc}</p>
-              </div>
+<div
+  className="detail-content"
+  dangerouslySetInnerHTML={{ __html: desc }}
+/>
+
             </div>
           </article>
         </div>

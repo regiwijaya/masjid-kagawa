@@ -320,6 +320,46 @@
   display: none;
 }
 
+/* ===== RICH TEXT (EDITOR OUTPUT) ===== */
+
+.tentang-richtext {
+  line-height: 1.9;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.tentang-richtext p {
+  margin-bottom: 12px;
+}
+
+.tentang-richtext h1,
+.tentang-richtext h2,
+.tentang-richtext h3 {
+  margin: 18px 0 10px;
+  color: #103524;
+}
+
+.tentang-richtext ul {
+  padding-left: 20px;
+  margin: 12px 0;
+}
+
+.tentang-richtext li {
+  margin-bottom: 6px;
+}
+
+/* spacing lebih enak */
+.tentang-history {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.tentang-history img {
+  width: 100%;
+  border-radius: 20px;
+}
 
 /* RESPONSIVE */
 
@@ -405,3 +445,4 @@
   }
 
 }
+

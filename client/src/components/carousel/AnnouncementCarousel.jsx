@@ -54,13 +54,16 @@ export default function AnnouncementCarousel() {
           http.get("/api/announcements"),
           http.get("/api/activities"),
           http.get("/api/kajian"),
-          http.get("/api/posts"), // ✅ TAMBAHAN
+          http.get("/api/posts"),
         ]);
 
+        // =========================
+        // 🔥 ANNOUNCEMENT
+        // =========================
         const announcements =
           annRes.status === "fulfilled" && Array.isArray(annRes.value.data)
             ? annRes.value.data.map((item) => ({
-                id: `announcement-${item._id}`,
+                id: `announcement-${item.id}`, // ✅ FIX
                 title: item.title,
                 category: item.category || "Umum",
                 source: "Pengumuman",
@@ -73,10 +76,13 @@ export default function AnnouncementCarousel() {
               }))
             : [];
 
+        // =========================
+        // 🔥 KEGIATAN
+        // =========================
         const activities =
           actRes.status === "fulfilled" && Array.isArray(actRes.value.data)
             ? actRes.value.data.map((item) => ({
-                id: `activity-${item._id}`,
+                id: `activity-${item.id}`, // ✅ FIX
                 title: item.title,
                 category: item.category || "Kegiatan",
                 source: "Kegiatan",
@@ -85,14 +91,17 @@ export default function AnnouncementCarousel() {
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
                 isFeatured: !!item.isFeatured,
-                href: `/kegiatan/${item._id}`,
+                href: `/kegiatan/${item.id}`, // ✅ FIX
               }))
             : [];
 
+        // =========================
+        // 🔥 KAJIAN
+        // =========================
         const kajian =
           kajRes.status === "fulfilled" && Array.isArray(kajRes.value.data)
             ? kajRes.value.data.map((item) => ({
-                id: `kajian-${item._id}`,
+                id: `kajian-${item.id}`, // ✅ FIX
                 title: item.title,
                 category: item.category || "Kajian",
                 source: "Kajian",
@@ -101,11 +110,13 @@ export default function AnnouncementCarousel() {
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
                 isFeatured: !!item.isFeatured,
-                href: "/kajian",
+                href: `/kegiatan/${item.id}`, // 🔥 samakan ke detail page
               }))
             : [];
 
-        // ✅ ARTIKEL (INI KUNCI FIX)
+        // =========================
+        // 🔥 ARTIKEL
+        // =========================
         const posts =
           postRes.status === "fulfilled" && Array.isArray(postRes.value.data)
             ? postRes.value.data
@@ -120,7 +131,7 @@ export default function AnnouncementCarousel() {
                   createdAt: item.createdAt,
                   updatedAt: item.updatedAt,
                   isFeatured: true,
-                  href: `/artikel/${item.slug}`,
+                  href: `/artikel/${item.slug || item.id}`, // fallback aman
                 }))
             : [];
 
@@ -128,7 +139,7 @@ export default function AnnouncementCarousel() {
           ...announcements,
           ...activities,
           ...kajian,
-          ...posts, // ✅ MASUKKAN KE FLOW YANG SAMA
+          ...posts,
         ]
           .sort((a, b) => {
             if (a.isFeatured !== b.isFeatured) {
@@ -207,7 +218,6 @@ export default function AnnouncementCarousel() {
   return (
     <section
       className="announcement-strip"
-      aria-label="Sorotan pilihan homepage"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -218,19 +228,10 @@ export default function AnnouncementCarousel() {
         </div>
 
         <div className="announcement-strip__nav">
-          <button
-            type="button"
-            className="announcement-strip__nav-btn"
-            onClick={prevSlide}
-          >
+          <button className="announcement-strip__nav-btn" onClick={prevSlide}>
             <i className="bi bi-chevron-left"></i>
           </button>
-
-          <button
-            type="button"
-            className="announcement-strip__nav-btn"
-            onClick={nextSlide}
-          >
+          <button className="announcement-strip__nav-btn" onClick={nextSlide}>
             <i className="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -250,13 +251,12 @@ export default function AnnouncementCarousel() {
           }}
         >
           {items.map((item) => (
-            <article className="announcement-strip__item" key={item.id}>
+            <article key={item.id} className="announcement-strip__item">
               <a href={item.href} className="announcement-strip__card">
                 <div className="announcement-strip__image-wrap">
                   <img
                     src={item.imageUrl || placeholder}
                     alt={item.title}
-                    className="announcement-strip__image"
                     onError={handleImgError}
                   />
 
@@ -265,7 +265,9 @@ export default function AnnouncementCarousel() {
                   </span>
 
                   {isNewItem(item) && (
-                    <span className="announcement-strip__new-badge">NEW</span>
+                    <span className="announcement-strip__new-badge">
+                      NEW
+                    </span>
                   )}
                 </div>
 

@@ -47,11 +47,6 @@ export default function MobileMenu() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/kajian" onClick={closeMenu}>
-              Kajian
-            </NavLink>
-          </li>
-          <li>
             <NavLink to="/artikel" onClick={closeMenu}>
               Artikel
             </NavLink>

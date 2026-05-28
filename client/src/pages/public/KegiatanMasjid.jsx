@@ -1,8 +1,8 @@
-// client/src/pages/public/KegiatanMasjid.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ActivityCardLarge from "../../components/cards/ActivityCardLarge";
 import PageHero from "../../components/common/PageHero";
+import KegiatanCalendar from "../../components/calendar/KegiatanCalendar";
 import "../../styles/pages/KegiatanMasjid.css";
 
 import imgKajian from "../../assets/images/kajian2.png";
@@ -25,6 +25,14 @@ const ORDERED_CATEGORIES = [
   "Event Besar",
   "Lainnya",
 ];
+
+// 🔥 FIX: STRIP HTML
+function stripHtml(html) {
+  if (!html) return "";
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
 
 function formatDateLabel(dateString, startTime = "", endTime = "") {
   if (!dateString) return "-";
@@ -109,7 +117,6 @@ export default function KegiatanMasjid() {
 
   return (
     <div className="kegiatan-page">
-      {/* HERO (sudah pakai config) */}
       <PageHero
         backgroundImage={hero.image}
         eyebrow={hero.eyebrow}
@@ -120,6 +127,7 @@ export default function KegiatanMasjid() {
 
       <section className="kegiatan-section">
         <div className="site-shell">
+
           <div className="kegiatan-section-head">
             <span className="kegiatan-section-eyebrow">
               Program & Aktivitas
@@ -136,7 +144,6 @@ export default function KegiatanMasjid() {
               {categories.map((kat) => (
                 <button
                   key={kat}
-                  type="button"
                   onClick={() => setFilter(kat)}
                   className={`filter-btn ${
                     filter === kat ? "filter-btn-active" : ""
@@ -148,47 +155,46 @@ export default function KegiatanMasjid() {
             </div>
           )}
 
-          {loading && (
-            <div className="kegiatan-state kegiatan-state--loading">
-              <p>Memuat kegiatan…</p>
-            </div>
-          )}
-
-          {!loading && err && (
-            <div className="kegiatan-state kegiatan-state--error">
-              <p>{err}</p>
-            </div>
-          )}
-
-          {!loading && !err && kegiatanFiltered.length === 0 && (
-            <div className="kegiatan-state kegiatan-state--empty">
-              <p>Belum ada kegiatan pada kategori ini.</p>
-            </div>
-          )}
-
           {!loading && !err && kegiatanFiltered.length > 0 && (
             <div className="kegiatan-grid">
               {kegiatanFiltered.map((k) => {
+                const id = k?.id || k?._id;
+
+                if (!id) return null;
+
                 const img = k.imageUrl || pickFallbackImage(k.category);
 
                 return (
                   <Link
-                    key={k._id}
-                    to={`/kegiatan/${k._id}`}
+                    key={id}
+                    to={`/kegiatan/${id}`}
                     className="kegiatan-card-link"
                   >
                     <ActivityCardLarge
                       img={img}
                       title={k.title}
-                      date={formatDateLabel(k.date, k.startTime, k.endTime)}
+                      date={formatDateLabel(
+                        k.date,
+                        k.startTime,
+                        k.endTime
+                      )}
                       category={k.category || "Kegiatan"}
-                      desc={k.description}
+
+                      // 🔥 FIX UTAMA DI SINI
+                      desc={stripHtml(k.description).slice(0, 140) + "..."}
                     />
                   </Link>
                 );
               })}
             </div>
           )}
+
+          {!loading && !err && kegiatan.length > 0 && (
+            <div style={{ marginTop: "60px" }}>
+              <KegiatanCalendar kegiatan={kegiatan} />
+            </div>
+          )}
+
         </div>
       </section>
     </div>

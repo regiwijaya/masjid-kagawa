@@ -206,9 +206,10 @@
 }
 
 .admin-settings__form textarea {
-  resize: vertical;
-  min-height: 126px;
-  line-height: 1.58;
+  resize: none;            /* 🔥 penting */
+  overflow: hidden;        /* 🔥 penting */
+  min-height: 120px;
+  line-height: 1.6;
 }
 
 .admin-settings__form input:focus,

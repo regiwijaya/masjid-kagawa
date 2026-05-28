@@ -1,0 +1,37 @@
+.location-card {
+  padding: 22px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 57, 35, 0.08);
+  box-shadow: 0 12px 32px rgba(16, 53, 36, 0.06);
+}
+
+.location-card__title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #103524;
+}
+
+.location-card__address {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: #61766b;
+}
+
+.location-card__btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #136f41;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.location-card__btn:hover {
+  background: #0f5b35;
+  transform: translateY(-1px);
+}

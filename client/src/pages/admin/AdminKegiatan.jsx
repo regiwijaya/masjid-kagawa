@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import "../../styles/admin/AdminKegiatan.css";
 import http from "../../api/http";
 
 const API_BASE = "/api/activities";
+
+const EVENT_TYPES = ["kegiatan", "kajian"];
 
 const ACTIVITY_CATEGORIES = [
   "Sosial",
@@ -13,12 +18,21 @@ const ACTIVITY_CATEGORIES = [
   "Anak",
   "Remaja",
   "Event Besar",
+  "Tauhid",
+  "Aqidah",
+  "Fiqih",
+  "Hadits",
+  "Tafsir",
+  "Sirah",
+  "Adab",
   "Lainnya",
 ];
 
 const EMPTY_FORM = {
+  type: "kegiatan",
   title: "",
   category: "Lainnya",
+  ustadz: "",
   date: "",
   startTime: "",
   endTime: "",
@@ -54,13 +68,11 @@ export default function AdminKegiatan() {
   const fetchItems = useCallback(async () => {
     try {
       setLoading(true);
-      setErr("");
-
       const res = await http.get(`${API_BASE}/admin/all`, { headers });
       setItems(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error(e);
-      setErr("Gagal memuat kegiatan.");
+      setErr("Gagal memuat data.");
     } finally {
       setLoading(false);
     }
@@ -70,13 +82,9 @@ export default function AdminKegiatan() {
     fetchItems();
   }, [fetchItems]);
 
-  // =========================
-  // FILTER
-  // =========================
   const filteredItems = items.filter((item) => {
-    const matchSearch = (item.title || "")
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    const matchSearch =
+      (item.title || "").toLowerCase().includes(search.toLowerCase());
 
     const matchStatus =
       filterStatus === "all"
@@ -104,11 +112,13 @@ export default function AdminKegiatan() {
   };
 
   const startEdit = (item) => {
-    setEditId(item.id); // ✅ FIX
+    setEditId(item.id);
 
     setForm({
+      type: item.type || "kegiatan",
       title: item.title || "",
       category: item.category || "Lainnya",
+      ustadz: item.ustadz || "",
       date: item.date ? String(item.date).slice(0, 10) : "",
       startTime: item.startTime || "",
       endTime: item.endTime || "",
@@ -130,37 +140,32 @@ export default function AdminKegiatan() {
 
     try {
       setSaving(true);
-      setErr("");
-      setInfo("");
 
       const payload = {
         ...form,
         title: form.title.trim(),
-        description: form.description.trim(),
-        location: form.location.trim(),
       };
 
       if (editId) {
         await http.put(`${API_BASE}/${editId}`, payload, { headers });
-        setInfo("Kegiatan berhasil diperbarui.");
+        setInfo("Berhasil update.");
       } else {
         await http.post(API_BASE, payload, { headers });
-        setInfo("Kegiatan berhasil ditambahkan.");
+        setInfo("Berhasil tambah.");
       }
 
       resetForm();
       fetchItems();
     } catch (e) {
       console.error(e);
-      setErr(e?.response?.data?.msg || "Gagal menyimpan kegiatan.");
+      setErr("Gagal menyimpan.");
     } finally {
       setSaving(false);
     }
   };
 
   const remove = async (id) => {
-    if (!window.confirm("Hapus kegiatan ini?")) return;
-
+    if (!window.confirm("Hapus?")) return;
     await http.delete(`${API_BASE}/${id}`, { headers });
     fetchItems();
   };
@@ -183,15 +188,26 @@ export default function AdminKegiatan() {
     fetchItems();
   };
 
+  // 🔥 CLEAN TOOLBAR (tidak terlalu ramai)
+  const quillModules = {
+    toolbar: [
+      [{ header: [2, 3, false] }],
+      ["bold", "italic"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      ["clean"],
+    ],
+  };
+
   return (
-    <AdminLayout title="Kegiatan">
+    <AdminLayout title="Kelola Event">
       <div className="admin-page admin-kegiatan-page">
 
         <div className="admin-toolbar">
           <div>
-            <h2>Kelola Kegiatan</h2>
+            <h2>Unified Event System</h2>
             <div className="admin-muted">
-              Tambah, edit, publish, dan tandai kegiatan pilihan untuk homepage.
+              Kelola kegiatan & kajian dalam satu sistem.
             </div>
           </div>
         </div>
@@ -207,202 +223,148 @@ export default function AdminKegiatan() {
           {/* FORM */}
           <section className="admin-card admin-kegiatan__form-card">
             <div className="admin-card-header">
-              <div>
-                <p className="admin-card-title">
-                  {editId ? "Edit Kegiatan" : "Tambah Kegiatan"}
-                </p>
-                <p className="admin-card-subtitle">
-                  Isi data kegiatan dengan jelas, rapi, dan siap tayang.
-                </p>
-              </div>
+              <p className="admin-card-title">
+                {editId ? "Edit Event" : "Tambah Event"}
+              </p>
             </div>
 
             <div className="admin-card-body">
               <form className="admin-kegiatan__form" onSubmit={submit}>
 
                 <label>
-                  Judul
-                  <input
-                    value={form.title}
-                    onChange={(e) => onChange("title", e.target.value)}
-                  />
+                  Tipe
+                  <select value={form.type} onChange={(e) => onChange("type", e.target.value)}>
+                    {EVENT_TYPES.map((t) => <option key={t}>{t}</option>)}
+                  </select>
                 </label>
+
+                <label>
+                  Judul
+                  <input value={form.title} onChange={(e) => onChange("title", e.target.value)} />
+                </label>
+
+                {form.type === "kajian" && (
+                  <label>
+                    Ustadz
+                    <input value={form.ustadz} onChange={(e) => onChange("ustadz", e.target.value)} />
+                  </label>
+                )}
 
                 <AdminImageUploader
                   type="activities"
-                  label="Poster Kegiatan"
                   value={form.imageUrl}
                   onChange={(url) => onChange("imageUrl", url)}
                 />
 
-                <label>
-                  Deskripsi
-                  <textarea
-                    value={form.description}
-                    onChange={(e) => onChange("description", e.target.value)}
-                  />
-                </label>
+                {/* 🔥 RICH TEXT EDITOR */}
+                <label>Deskripsi</label>
+                <ReactQuill
+                  theme="snow"
+                  value={form.description}
+                  onChange={(value) => onChange("description", value)}
+                  modules={quillModules}
+                />
 
                 <div className="admin-kegiatan__row">
                   <label>
                     Kategori
-                    <select
-                      value={form.category}
-                      onChange={(e) => onChange("category", e.target.value)}
-                    >
-                      {ACTIVITY_CATEGORIES.map((cat) => (
-                        <option key={cat}>{cat}</option>
-                      ))}
+                    <select value={form.category} onChange={(e) => onChange("category", e.target.value)}>
+                      {ACTIVITY_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                     </select>
                   </label>
 
                   <label>
                     Tanggal
-                    <input
-                      type="date"
-                      value={form.date}
-                      onChange={(e) => onChange("date", e.target.value)}
-                    />
+                    <input type="date" value={form.date} onChange={(e) => onChange("date", e.target.value)} />
                   </label>
                 </div>
 
-                <div className="admin-kegiatan__row admin-kegiatan__row--time">
+                <div className="admin-kegiatan__row">
                   <label>
                     Jam Mulai
-                    <input
-                      type="time"
-                      value={form.startTime}
-                      onChange={(e) => onChange("startTime", e.target.value)}
-                    />
+                    <input type="time" value={form.startTime} onChange={(e) => onChange("startTime", e.target.value)} />
                   </label>
 
                   <label>
                     Jam Selesai
-                    <input
-                      type="time"
-                      value={form.endTime}
-                      onChange={(e) => onChange("endTime", e.target.value)}
-                    />
+                    <input type="time" value={form.endTime} onChange={(e) => onChange("endTime", e.target.value)} />
                   </label>
                 </div>
 
                 <label>
                   Lokasi
-                  <input
-                    value={form.location}
-                    onChange={(e) => onChange("location", e.target.value)}
-                  />
+                  <input value={form.location} onChange={(e) => onChange("location", e.target.value)} />
                 </label>
 
                 <div className="admin-kegiatan__checklist">
                   <label className="admin-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={form.isPublished}
-                      onChange={(e) => onCheckbox("isPublished", e.target.checked)}
-                    />
-                    <span>Langsung publikasikan</span>
+                    <input type="checkbox" checked={form.isPublished} onChange={(e) => onCheckbox("isPublished", e.target.checked)} />
+                    Publish
                   </label>
 
                   <label className="admin-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={form.isFeatured}
-                      onChange={(e) => onCheckbox("isFeatured", e.target.checked)}
-                    />
-                    <span>Jadikan pilihan di homepage</span>
+                    <input type="checkbox" checked={form.isFeatured} onChange={(e) => onCheckbox("isFeatured", e.target.checked)} />
+                    Featured
                   </label>
                 </div>
 
-                <div className="admin-actions">
-                  <button className="admin-btn admin-btn-primary">
-                    {saving ? "Menyimpan..." : editId ? "Simpan Perubahan" : "Tambah Kegiatan"}
-                  </button>
-                </div>
+                <button className="admin-btn admin-btn-primary">
+                  {saving ? "Menyimpan..." : editId ? "Update" : "Tambah"}
+                </button>
 
               </form>
             </div>
           </section>
 
-          {/* LIST */}
+          {/* LIST tetap sama */}
           <section className="admin-card admin-kegiatan__list-card">
-
             <div className="admin-card-header admin-list-toolbar">
-              <div>
-                <p className="admin-card-title">Daftar Kegiatan</p>
-              </div>
+              <p className="admin-card-title">Daftar Event</p>
 
               <div className="admin-list-controls">
-                <input
-                  placeholder="Cari judul..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="all">Semua</option>
-                  <option value="published">Published</option>
-                  <option value="draft">Draft</option>
-                </select>
+                <input placeholder="Cari..." value={search} onChange={(e) => setSearch(e.target.value)} />
               </div>
             </div>
 
             <div className="admin-card-body">
+              <ul className="admin-list">
+                {filteredItems.map((it) => (
+                  <li key={it.id} className="admin-list-item">
 
-              {loading ? (
-                <p className="admin-muted">Memuat...</p>
-              ) : filteredItems.length === 0 ? (
-                <p className="admin-muted">Tidak ada kegiatan.</p>
-              ) : (
-                <ul className="admin-list">
-                  {filteredItems.map((it) => (
-                    <li key={it.id} className="admin-list-item">
+                    <div className="admin-item-main">
+                      {it.imageUrl && (
+                        <div className="admin-item-thumb">
+                          <img src={it.imageUrl} alt="" />
+                        </div>
+                      )}
 
-                      <div className="admin-item-main">
+                      <div className="admin-item-content">
+                        <div className="admin-item-title">{it.title}</div>
 
-                        {it.imageUrl && (
-                          <div className="admin-item-thumb">
-                            <img src={it.imageUrl} alt="" />
-                          </div>
-                        )}
+                        <div className="admin-item-meta">
+                          <span className="admin-pill">{it.type}</span>
+                          <span className="admin-pill">{it.category}</span>
+                          <span className="admin-pill">
+                            {new Date(it.date).toLocaleDateString("id-ID")}
+                          </span>
 
-                        <div className="admin-item-content">
-                          <div className="admin-item-title">{it.title}</div>
-
-                          <div className="admin-item-meta">
-                            <span className="admin-pill">{it.category}</span>
+                          {it.startTime && (
                             <span className="admin-pill">
-                              {String(it.date).slice(0, 10)}
+                              {it.startTime} - {it.endTime}
                             </span>
-
-                            {it.startTime && (
-                              <span className="admin-pill">
-                                {it.startTime} - {it.endTime}
-                              </span>
-                            )}
-
-                            <span className={`admin-pill admin-pill--status ${it.isPublished ? "is-published" : "is-draft"}`}>
-                              {it.isPublished ? "Published" : "Draft"}
-                            </span>
-                          </div>
+                          )}
                         </div>
                       </div>
+                    </div>
 
-                      <div className="admin-item-actions">
-                        <button className="admin-btn" onClick={() => startEdit(it)}>Edit</button>
-                        <button className="admin-btn admin-btn-ghost" onClick={() => togglePublish(it)}>Draft</button>
-                        <button className="admin-btn admin-btn-ghost" onClick={() => toggleFeatured(it)}>Feature</button>
-                        <button className="admin-btn admin-btn-danger" onClick={() => remove(it.id)}>Hapus</button>
-                      </div>
+                    <div className="admin-item-actions">
+                      <button className="admin-btn" onClick={() => startEdit(it)}>Edit</button>
+                      <button className="admin-btn admin-btn-danger" onClick={() => remove(it.id)}>Hapus</button>
+                    </div>
 
-                    </li>
-                  ))}
-                </ul>
-              )}
-
+                  </li>
+                ))}
+              </ul>
             </div>
           </section>
 

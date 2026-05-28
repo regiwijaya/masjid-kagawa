@@ -114,18 +114,64 @@ export default function AdminPosts() {
   });
 
   // =============================
-  // QUILL FIX
+  // 🔥 IMAGE HANDLER (FIX UTAMA)
+  // =============================
+  const imageHandler = useCallback(function () {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const res = await http.post("/api/upload/posts", formData, {
+          headers: {
+            ...headers,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const imageUrl = res.data.imageUrl;
+
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+
+        quill.insertEmbed(range.index, "image", imageUrl);
+      } catch (err) {
+        console.error("Upload gagal:", err);
+        alert("Upload gambar gagal");
+      }
+    };
+  }, [headers]);
+
+  // =============================
+  // QUILL MODULES (UPDATED)
   // =============================
   const modules = useMemo(() => ({
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
-      ["clean"],
-    ],
-  }), []);
+    toolbar: {
+      container: [
+        [{ header: [1, 2, false] }],
+        ["bold", "italic"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image"],
+        ["clean"],
+      ],
+      handlers: {
+        image: imageHandler,
+      },
+    },
+  }), [imageHandler]);
 
+  // =============================
+  // SUBMIT
+  // =============================
   const submit = async (e) => {
     e.preventDefault();
 

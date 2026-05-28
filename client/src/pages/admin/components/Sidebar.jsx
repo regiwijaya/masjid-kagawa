@@ -22,11 +22,6 @@ const menuItems = [
     label: "Kegiatan Masjid",
   },
   {
-    to: "/admin/kajian",
-    icon: "📖",
-    label: "Kajian",
-  },
-  {
     to: "/admin/posts",
     icon: "📝",
     label: "Artikel",
@@ -45,6 +40,11 @@ const menuItems = [
     to: "/admin/donasi",
     icon: "💝",
     label: "Donasi",
+  },
+  {
+    to: "/admin/contact", // ✅ TAMBAHAN
+    icon: "📩",
+    label: "Pesan Masuk",
   },
 
   {

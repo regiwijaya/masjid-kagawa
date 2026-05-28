@@ -225,12 +225,16 @@ export default function TentangMasjid() {
                     />
                   </div>
 
-                  <div className="tentang-history__content">
-                    <p>
-                      {data.historyText ||
-                        "Informasi sejarah masjid belum diisi."}
-                    </p>
-                  </div>
+<div className="tentang-history__content">
+  {data.historyText ? (
+    <div
+      className="tentang-richtext"
+      dangerouslySetInnerHTML={{ __html: data.historyText }}
+    />
+  ) : (
+    <p>Informasi sejarah masjid belum diisi.</p>
+  )}
+</div>
                 </div>
               </section>
 
