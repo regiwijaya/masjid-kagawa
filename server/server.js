@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// ROUTES
 import activityRoutes from "./routes/activityRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
@@ -19,32 +20,40 @@ dotenv.config();
 
 const app = express();
 
+// ===== PATH SETUP =====
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ===== MIDDLEWARE =====
+// ===== CORS (FIX UNTUK FRONTEND HOSTINGER) =====
 app.use(
   cors({
-    origin: true,
+    origin: [
+      "https://masjidkagawa.com",
+      "https://www.masjidkagawa.com",
+      "http://localhost:5173", // dev local
+    ],
     credentials: true,
   })
 );
 
-// 🔥 FIX: upload besar
+// ===== BODY LIMIT =====
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
-// 🔥 STATIC FILE (WAJIB)
+// ===== STATIC FILE =====
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ===== ROUTES =====
+// ===== HEALTH CHECK (WAJIB) =====
 app.get("/", (req, res) => {
-  res.json({ message: "Masjid Kagawa API is running (Prisma)" });
+  res.json({
+    status: "OK",
+    message: "Masjid Kagawa API is running 🚀",
+    env: process.env.NODE_ENV || "development",
+  });
 });
 
-// 🔥 FIX: endpoint HARUS plural "uploads"
+// ===== ROUTES =====
 app.use("/api/uploads", uploadRoutes);
-
 app.use("/api/activities", activityRoutes);
 app.use("/api/announcements", announcementRoutes);
 app.use("/api/posts", postRoutes);
@@ -62,7 +71,7 @@ app.use((req, res) => {
   });
 });
 
-// ===== ERROR HANDLER (WAJIB)
+// ===== ERROR HANDLER =====
 app.use((err, req, res, next) => {
   console.error("❌ SERVER ERROR:", err);
 
