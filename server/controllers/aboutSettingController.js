@@ -76,6 +76,8 @@ export const getAboutSetting = async (req, res) => {
     return res.json(setting);
   } catch (err) {
     console.error("getAboutSetting ERROR:", err);
+    console.log("DB historyText:", setting.historyText);
+    console.log("Length:", setting.historyText?.length);
     return res.status(500).json({ msg: "Server error" });
   }
 };

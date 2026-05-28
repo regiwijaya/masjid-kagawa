@@ -33,16 +33,28 @@ model Announcement {
 model Activity {
   id          Int      @id @default(autoincrement())
   title       String
+
+  // 🔥 NEW (CORE)
+  type        String   @default("kegiatan") // kegiatan | kajian
+
   category    String?  @default("Kegiatan")
   date        DateTime
   startTime   String?
   endTime     String?
+
+  // 🔥 untuk kajian
+  ustadz      String?
+
   location    String?
-  description String?
+  description String? @db.LongText
   imageUrl    String?
+
   isPublished Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+
   createdBy   Int?
   updatedBy   Int?
+
   createdAt   DateTime @default(now())
 }
 
@@ -91,23 +103,36 @@ model AboutSetting {
   heroSubtitle      String?
   heroImageUrl      String?
   historyTitle      String?
-  historyText       String?
+  historyText       String? @db.Text
   historyImageUrl   String?
   visionTitle       String?
-  visionText        String?
+  visionText        String? @db.Text
   missionTitle      String?
   missionItems      Json?
   leaders           Json?
-  footerDescription String?
+  footerDescription String? @db.Text
   address           String?
   email             String?
   phone             String?
-  mapEmbedUrl       String?
+  mapEmbedUrl       String? @db.Text
   imamDuty          String?
   muadzinDuty       String?
   social            Json?
   updatedBy         Int?
   createdAt         DateTime @default(now())
+}
+
+model Contact {
+  id          Int      @id @default(autoincrement())
+  type        String
+  name        String?
+  contact     String?
+  message     String
+  category    String?
+  isAnonymous Boolean  @default(false)
+  isRead      Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
 }
 
 model DonationSetting {

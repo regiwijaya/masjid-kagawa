@@ -15,8 +15,13 @@ function parseId(id) {
 // =========================
 export const getPublishedActivities = async (req, res) => {
   try {
+    const { type } = req.query;
+
     const items = await prisma.activity.findMany({
-      where: { isPublished: true },
+      where: {
+        isPublished: true,
+        ...(type ? { type } : {}),
+      },
       orderBy: [
         { date: "desc" },
         { createdAt: "desc" },
@@ -38,12 +43,9 @@ export const getPublishedActivityById = async (req, res) => {
       return res.status(400).json({ msg: "ID tidak valid" });
     }
 
-    const item = await prisma.activity.findFirst({
-      where: {
-        id,
-        isPublished: true,
-      },
-    });
+const item = await prisma.activity.findUnique({
+  where: { id },
+});
 
     if (!item) {
       return res.status(404).json({ msg: "Kegiatan tidak ditemukan" });
@@ -79,10 +81,12 @@ export const createActivity = async (req, res) => {
   try {
     const {
       title,
+      type,
       category,
       date,
       startTime,
       endTime,
+      ustadz,
       location,
       description,
       imageUrl,
@@ -98,10 +102,12 @@ export const createActivity = async (req, res) => {
     const created = await prisma.activity.create({
       data: {
         title: title.trim(),
+        type: type || "kegiatan",
         category: category || "Kegiatan",
         date: new Date(date),
         startTime: startTime || null,
         endTime: endTime || null,
+        ustadz: ustadz || null,
         location: location || null,
         description: description || null,
         imageUrl: imageUrl || null,

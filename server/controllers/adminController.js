@@ -1,7 +1,8 @@
 // server/controllers/adminController.js
+
 import prisma from "../prisma/client.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs"; // 🔥 FIX: gunakan bcryptjs
 
 // ===============================
 // REGISTER ADMIN
@@ -16,7 +17,6 @@ export const registerAdmin = async (req, res) => {
       return res.status(400).json({ msg: "Semua kolom wajib diisi" });
     }
 
-    // cek admin sudah ada
     const exists = await prisma.admin.findUnique({
       where: { email },
     });
@@ -25,10 +25,8 @@ export const registerAdmin = async (req, res) => {
       return res.status(400).json({ msg: "Email sudah terdaftar" });
     }
 
-    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // cek apakah admin pertama
     const count = await prisma.admin.count();
 
     const admin = await prisma.admin.create({
@@ -72,6 +70,10 @@ export const loginAdmin = async (req, res) => {
 
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email & password wajib diisi" });
+    }
+
     const admin = await prisma.admin.findUnique({
       where: { email },
     });
@@ -87,7 +89,7 @@ export const loginAdmin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin.id },
+      { id: admin.id, role: admin.role },
       process.env.JWT_SECRET || "secret",
       {
         expiresIn: "7d",

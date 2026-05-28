@@ -33,15 +33,18 @@ async function generateUniqueSlug(title, excludeId = null) {
 }
 
 /* ======================================
-   CLEAN HTML (FIX UTAMA)
+   SAFE HTML CLEAN (FIX BARU)
 ====================================== */
 function cleanHtml(html = "") {
   if (!html) return "";
 
-  return html
-    .replace(/\\/g, "") // hilangkan escape backslash
-    .replace(/\n/g, "") // hilangkan newline
-    .trim();
+  try {
+    return String(html)
+      .replace(/\u0000/g, "") // remove null char
+      .trim();
+  } catch {
+    return "";
+  }
 }
 
 /* ======================================
@@ -98,10 +101,12 @@ export const getAllPostsAdmin = async (req, res) => {
 };
 
 /* ======================================
-   CREATE (FIX HTML CLEAN)
+   CREATE (FIX TOTAL)
 ====================================== */
 export const createPost = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
+
     const {
       title,
       excerpt,
@@ -117,6 +122,10 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ msg: "Judul artikel wajib diisi" });
     }
 
+    if (!content || content.trim() === "") {
+      return res.status(400).json({ msg: "Konten artikel tidak boleh kosong" });
+    }
+
     const slug = await generateUniqueSlug(title);
 
     const created = await prisma.post.create({
@@ -124,7 +133,7 @@ export const createPost = async (req, res) => {
         title: title.trim(),
         slug,
         excerpt: excerpt?.trim() || "",
-        content: cleanHtml(content), // ✅ FIX DI SINI
+        content: cleanHtml(content), // ✅ FIX AMAN
         imageUrl: imageUrl?.trim() || "",
         category: category?.trim() || "Artikel",
         author: author?.trim() || "Admin Masjid Kagawa",
@@ -135,16 +144,22 @@ export const createPost = async (req, res) => {
 
     return res.status(201).json(created);
   } catch (err) {
-    console.error("createPost ERROR:", err);
-    return res.status(500).json({ msg: "Server error" });
+    console.error("createPost ERROR FULL:", err);
+
+    return res.status(500).json({
+      msg: "Server error saat membuat artikel",
+      error: err.message,
+    });
   }
 };
 
 /* ======================================
-   UPDATE (FIX HTML + ID)
+   UPDATE (FIX TOTAL)
 ====================================== */
 export const updatePost = async (req, res) => {
   try {
+    console.log("UPDATE BODY:", req.body);
+
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -175,26 +190,32 @@ export const updatePost = async (req, res) => {
           typeof req.body?.excerpt === "string"
             ? req.body.excerpt.trim()
             : current.excerpt,
+
         content:
           typeof req.body?.content === "string"
-            ? cleanHtml(req.body.content) // ✅ FIX DI SINI
+            ? cleanHtml(req.body.content) // ✅ FIX AMAN
             : current.content,
+
         imageUrl:
           typeof req.body?.imageUrl === "string"
             ? req.body.imageUrl.trim()
             : current.imageUrl,
+
         category:
           typeof req.body?.category === "string"
             ? req.body.category.trim()
             : current.category,
+
         author:
           typeof req.body?.author === "string"
             ? req.body.author.trim()
             : current.author,
+
         isPublished:
           typeof req.body?.isPublished === "boolean"
             ? req.body.isPublished
             : current.isPublished,
+
         isFeatured:
           typeof req.body?.isFeatured === "boolean"
             ? req.body.isFeatured
@@ -204,8 +225,12 @@ export const updatePost = async (req, res) => {
 
     return res.json(updated);
   } catch (err) {
-    console.error("updatePost ERROR:", err);
-    return res.status(500).json({ msg: "Server error" });
+    console.error("updatePost ERROR FULL:", err);
+
+    return res.status(500).json({
+      msg: "Server error saat update artikel",
+      error: err.message,
+    });
   }
 };
 
