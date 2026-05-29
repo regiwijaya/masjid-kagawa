@@ -7,7 +7,7 @@ import axios from "axios";
  * - Prod: isi VITE_API_BASE_URL mis. https://domain.com
  */
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.masjidkagawa.com",
   headers: {
     "Content-Type": "application/json",
   },
