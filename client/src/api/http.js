@@ -2,12 +2,19 @@
 import axios from "axios";
 
 /**
- * baseURL:
- * - Dev (Vite proxy): kosong "" supaya /api langsung ke proxy
- * - Prod: isi VITE_API_BASE_URL mis. https://domain.com
+ * API base URL:
+ * - Local dev: pakai Vite proxy → "/api"
+ * - Production: pakai backend Hostinger → https://api.masjidkagawa.com/api
+ *
+ * Database MySQL tetap di backend Hostinger.
+ * Frontend tidak connect langsung ke database.
  */
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "/api" : "https://api.masjidkagawa.com/api");
+
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.masjidkagawa.com",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -16,9 +23,11 @@ const http = axios.create({
 // Auto attach adminToken kalau ada
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem("adminToken");
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
