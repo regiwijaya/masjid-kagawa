@@ -4,14 +4,14 @@ import axios from "axios";
 /**
  * API base URL:
  * - Local dev: pakai Vite proxy → "/api"
- * - Production: pakai backend Hostinger → https://api.masjidkagawa.com/api
+ * - Production: pakai backend Hostinger → https://api.masjidkagawa.com
  *
  * Database MySQL tetap di backend Hostinger.
  * Frontend tidak connect langsung ke database.
  */
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? "/api" : "https://api.masjidkagawa.com/api");
+  (import.meta.env.DEV ? "/api" : "https://api.masjidkagawa.com");
 
 const http = axios.create({
   baseURL: API_BASE_URL,
