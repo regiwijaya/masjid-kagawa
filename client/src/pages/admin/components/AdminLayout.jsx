@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import http from "../../../api/http";
 import "../../../styles/admin/AdminLayout.css";
 
 const MOBILE_BP = 900;
@@ -16,18 +17,19 @@ export default function AdminLayout({ children, title = "Admin Panel" }) {
   );
 
   const [sidebarOpen, setSidebarOpen] = useState(() =>
-  window.matchMedia(`(max-width:${MOBILE_BP}px)`).matches ? false : true
-);
+    window.matchMedia(`(max-width:${MOBILE_BP}px)`).matches ? false : true
+  );
+
   const location = useLocation();
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width:${MOBILE_BP}px)`);
 
     const handleResize = () => {
-  const mobile = mq.matches;
-  setIsMobile(mobile);
-  setSidebarOpen(mobile ? false : true);
-};
+      const mobile = mq.matches;
+      setIsMobile(mobile);
+      setSidebarOpen(mobile ? false : true);
+    };
 
     handleResize();
 
@@ -59,7 +61,7 @@ export default function AdminLayout({ children, title = "Admin Panel" }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
 
     if (!token) {
       window.location.href = "/admin/login";
@@ -67,6 +69,7 @@ export default function AdminLayout({ children, title = "Admin Panel" }) {
     }
 
     const controller = new AbortController();
+
     validateToken(token, controller.signal);
 
     return () => controller.abort();
@@ -74,27 +77,24 @@ export default function AdminLayout({ children, title = "Admin Panel" }) {
 
   async function validateToken(token, signal) {
     try {
-      const res = await fetch("/api/admin/me", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await http.get("/api/admin/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         signal,
       });
 
-      if (!res.ok) {
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("token");
-        window.location.href = "/admin/login";
-        return;
-      }
-
-      const data = await res.json();
-      setAdmin(data);
+      setAdmin(res.data);
       setAuthorized(true);
     } catch (err) {
       if (err?.name === "AbortError" || signal?.aborted) return;
 
       console.error("VALIDATION ERROR:", err);
+
       localStorage.removeItem("adminToken");
       localStorage.removeItem("token");
+      localStorage.removeItem("admin");
+
       window.location.href = "/admin/login";
     } finally {
       if (!signal?.aborted) setChecking(false);
