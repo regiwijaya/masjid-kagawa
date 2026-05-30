@@ -1,6 +1,6 @@
-// client/src/pages/admin/AdminLogin.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import http from "../../api/http";
 import "../../styles/pages/AdminLogin.css";
 import logoMasjid from "../../assets/images/logo-kmi.png";
 
@@ -18,27 +18,39 @@ export default function AdminLogin() {
     setMsg("");
 
     try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const res = await http.post("/api/admin/login", {
+        email,
+        password,
       });
 
-      const data = await res.json().catch(() => ({}));
+      const data = res.data;
 
-      if (!res.ok) {
-        setMsg(data.msg || "Login gagal");
+      if (!data?.token) {
+        setMsg("Login gagal: token tidak ditemukan.");
         return;
       }
 
       localStorage.setItem("adminToken", data.token);
+      localStorage.setItem("token", data.token);
+
+      if (data.admin) {
+        localStorage.setItem("admin", JSON.stringify(data.admin));
+      }
 
       setMsg("Login sukses, mengalihkan...");
+
       setTimeout(() => {
-        navigate("/admin/dashboard", { replace: true });
-      }, 400);
+        window.location.href = "/admin/dashboard";
+      }, 300);
     } catch (err) {
-      setMsg("Tidak dapat terhubung ke server");
+      console.error("LOGIN ERROR:", err);
+
+      const message =
+        err?.response?.data?.msg ||
+        err?.response?.data?.message ||
+        "Tidak dapat terhubung ke server";
+
+      setMsg(message);
     } finally {
       setLoading(false);
     }
@@ -47,7 +59,6 @@ export default function AdminLogin() {
   return (
     <div className="admin-login-wrapper">
       <div className="admin-login-card shadow-lg">
-        {/* ✅ Logo clickable: kembali ke Home */}
         <button
           type="button"
           className="admin-logo-btn"
@@ -89,7 +100,6 @@ export default function AdminLogin() {
 
         {msg && <p className="admin-login-msg">{msg}</p>}
 
-        {/* Link text optional (juga via CSS) */}
         <button
           type="button"
           className="admin-back-home"
