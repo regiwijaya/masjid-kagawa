@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import Cropper from "react-easy-crop";
+import http from "../../api/http";
 import "../../styles/admin/AdminImageUploader.css";
 
 function getAdminToken() {
@@ -41,12 +42,20 @@ async function getCroppedImageBlob(imageSrc, croppedAreaPixels) {
           reject(new Error("Gagal membuat file hasil crop."));
           return;
         }
+
         resolve(blob);
       },
       "image/jpeg",
       0.85
     );
   });
+}
+
+function normalizeImageUrl(imageUrl) {
+  if (!imageUrl) return "";
+  if (imageUrl.startsWith("http")) return imageUrl;
+
+  return `https://api.masjidkagawa.com${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
 }
 
 export default function AdminImageUploader({
@@ -64,10 +73,7 @@ export default function AdminImageUploader({
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const previewSrc = useMemo(() => {
-    if (!value) return "";
-    return value.startsWith("http") ? value : value;
-  }, [value]);
+  const previewSrc = useMemo(() => normalizeImageUrl(value), [value]);
 
   const onCropComplete = useCallback((_, croppedPixels) => {
     setCroppedAreaPixels(croppedPixels);
@@ -95,9 +101,15 @@ export default function AdminImageUploader({
     setMessage("");
 
     const reader = new FileReader();
+
     reader.onload = () => {
       setImageSrc(String(reader.result || ""));
     };
+
+    reader.onerror = () => {
+      setMessage("Gagal membaca file gambar.");
+    };
+
     reader.readAsDataURL(file);
 
     e.target.value = "";
@@ -118,26 +130,31 @@ export default function AdminImageUploader({
       const formData = new FormData();
       formData.append("image", blob, "cropped.jpg");
 
-      const res = await fetch(`/api/uploads/${type}`, {
-        method: "POST",
+      const res = await http.post(`/api/uploads/${type}`, formData, {
         headers: {
           Authorization: `Bearer ${getAdminToken()}`,
         },
-        body: formData,
       });
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
-        throw new Error(data?.msg || "Upload gagal");
+      if (!data?.imageUrl) {
+        throw new Error("Upload berhasil, tetapi URL gambar tidak ditemukan.");
       }
 
-      onChange?.(String(data.imageUrl || ""));
+      onChange?.(String(data.imageUrl));
       setMessage("Upload berhasil");
       resetCrop();
     } catch (err) {
-      console.error(err);
-      setMessage(err.message || "Upload gagal");
+      console.error("UPLOAD ERROR:", err);
+
+      const errorMessage =
+        err?.response?.data?.msg ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Upload gagal";
+
+      setMessage(errorMessage);
     } finally {
       setUploading(false);
     }
@@ -193,9 +210,7 @@ export default function AdminImageUploader({
               />
             </label>
 
-            <p className="admin-image-uploader__message">
-              File: {fileName}
-            </p>
+            <p className="admin-image-uploader__message">File: {fileName}</p>
 
             <div className="admin-image-uploader__actions">
               <button
@@ -226,9 +241,7 @@ export default function AdminImageUploader({
         </div>
       )}
 
-      {message && (
-        <p className="admin-image-uploader__message">{message}</p>
-      )}
+      {message && <p className="admin-image-uploader__message">{message}</p>}
     </div>
   );
 }
