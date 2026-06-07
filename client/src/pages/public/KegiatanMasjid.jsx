@@ -14,6 +14,7 @@ import http from "../../api/http";
 import { heroConfig } from "../../config/heroConfig";
 
 const API_BASE = "/api/activities";
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 
 const ORDERED_CATEGORIES = [
   "Semua",
@@ -26,7 +27,13 @@ const ORDERED_CATEGORIES = [
   "Lainnya",
 ];
 
-// 🔥 FIX: STRIP HTML
+function getImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 function stripHtml(html) {
   if (!html) return "";
   const div = document.createElement("div");
@@ -127,7 +134,6 @@ export default function KegiatanMasjid() {
 
       <section className="kegiatan-section">
         <div className="site-shell">
-
           <div className="kegiatan-section-head">
             <span className="kegiatan-section-eyebrow">
               Program & Aktivitas
@@ -155,6 +161,12 @@ export default function KegiatanMasjid() {
             </div>
           )}
 
+          {loading && <div className="kegiatan-state">Memuat kegiatan...</div>}
+
+          {!loading && err && (
+            <div className="kegiatan-state kegiatan-state--error">{err}</div>
+          )}
+
           {!loading && !err && kegiatanFiltered.length > 0 && (
             <div className="kegiatan-grid">
               {kegiatanFiltered.map((k) => {
@@ -162,7 +174,9 @@ export default function KegiatanMasjid() {
 
                 if (!id) return null;
 
-                const img = k.imageUrl || pickFallbackImage(k.category);
+                const img = k.imageUrl
+                  ? getImageUrl(k.imageUrl)
+                  : pickFallbackImage(k.category);
 
                 return (
                   <Link
@@ -173,15 +187,9 @@ export default function KegiatanMasjid() {
                     <ActivityCardLarge
                       img={img}
                       title={k.title}
-                      date={formatDateLabel(
-                        k.date,
-                        k.startTime,
-                        k.endTime
-                      )}
+                      date={formatDateLabel(k.date, k.startTime, k.endTime)}
                       category={k.category || "Kegiatan"}
-
-                      // 🔥 FIX UTAMA DI SINI
-                      desc={stripHtml(k.description).slice(0, 140) + "..."}
+                      desc={`${stripHtml(k.description).slice(0, 140)}...`}
                     />
                   </Link>
                 );
@@ -194,7 +202,6 @@ export default function KegiatanMasjid() {
               <KegiatanCalendar kegiatan={kegiatan} />
             </div>
           )}
-
         </div>
       </section>
     </div>

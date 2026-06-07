@@ -6,6 +6,15 @@ import "../../styles/pages/Artikel.css";
 import { heroConfig } from "../../config/heroConfig";
 import placeholder from "../../assets/images/placeholder.svg";
 
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 function formatDate(dateString) {
   if (!dateString) return "-";
 
@@ -32,10 +41,8 @@ export default function Artikel() {
         setError("");
 
         const res = await http.get("/api/posts");
-
         const data = Array.isArray(res.data) ? res.data : [];
 
-        // ✅ FILTER: hanya yang punya slug (biar aman ke detail)
         setPosts(data.filter((p) => p.slug));
       } catch (err) {
         console.error(err);
@@ -76,11 +83,11 @@ export default function Artikel() {
             <span className="artikel-head__eyebrow">Artikel Terbaru</span>
             <h2 className="artikel-head__title">Artikel & Tulisan Pilihan</h2>
             <p className="artikel-head__subtext">
-              Bacaan yang memberi manfaat, menambah wawasan, dan menguatkan nilai Islam dalam kehidupan sehari-hari.
+              Bacaan yang memberi manfaat, menambah wawasan, dan menguatkan nilai
+              Islam dalam kehidupan sehari-hari.
             </p>
           </div>
 
-          {/* FILTER */}
           {!loading && !error && categories.length > 1 && (
             <div className="artikel-filter">
               {categories.map((item) => (
@@ -98,7 +105,6 @@ export default function Artikel() {
             </div>
           )}
 
-          {/* STATE */}
           {loading ? (
             <div className="artikel-state">Memuat artikel...</div>
           ) : error ? (
@@ -109,13 +115,9 @@ export default function Artikel() {
             <div className="artikel-grid">
               {filteredPosts.map((post) => (
                 <article key={post.id} className="artikel-card">
-                  {/* IMAGE */}
-                  <Link
-                    to={`/artikel/${post.slug}`}
-                    className="artikel-card__media"
-                  >
+                  <Link to={`/artikel/${post.slug}`} className="artikel-card__media">
                     <img
-                      src={post.imageUrl || placeholder}
+                      src={getImageUrl(post.imageUrl)}
                       alt={post.title}
                       onError={(e) => {
                         e.currentTarget.src = placeholder;
@@ -123,7 +125,6 @@ export default function Artikel() {
                     />
                   </Link>
 
-                  {/* BODY */}
                   <div className="artikel-card__body">
                     <div className="artikel-card__meta">
                       <span className="artikel-card__badge">
@@ -135,14 +136,11 @@ export default function Artikel() {
                     </div>
 
                     <h3 className="artikel-card__title">
-                      <Link to={`/artikel/${post.slug}`}>
-                        {post.title}
-                      </Link>
+                      <Link to={`/artikel/${post.slug}`}>{post.title}</Link>
                     </h3>
 
                     <p className="artikel-card__excerpt">
-                      {post.excerpt ||
-                        "Ringkasan artikel belum tersedia."}
+                      {post.excerpt || "Ringkasan artikel belum tersedia."}
                     </p>
 
                     <div className="artikel-card__footer">
@@ -150,10 +148,7 @@ export default function Artikel() {
                         {post.author || "Admin"}
                       </span>
 
-                      <Link
-                        to={`/artikel/${post.slug}`}
-                        className="artikel-card__link"
-                      >
+                      <Link to={`/artikel/${post.slug}`} className="artikel-card__link">
                         Baca →
                       </Link>
                     </div>

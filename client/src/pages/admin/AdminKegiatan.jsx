@@ -8,6 +8,7 @@ import "../../styles/admin/AdminKegiatan.css";
 import http from "../../api/http";
 
 const API_BASE = "/api/activities";
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 
 const EVENT_TYPES = ["kegiatan", "kajian"];
 
@@ -47,6 +48,13 @@ function getAdminToken() {
   return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
 }
 
+function getImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 export default function AdminKegiatan() {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -83,8 +91,9 @@ export default function AdminKegiatan() {
   }, [fetchItems]);
 
   const filteredItems = items.filter((item) => {
-    const matchSearch =
-      (item.title || "").toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (item.title || "")
+      .toLowerCase()
+      .includes(search.toLowerCase());
 
     const matchStatus =
       filterStatus === "all"
@@ -170,25 +179,6 @@ export default function AdminKegiatan() {
     fetchItems();
   };
 
-  const togglePublish = async (item) => {
-    await http.put(
-      `${API_BASE}/${item.id}`,
-      { isPublished: !item.isPublished },
-      { headers }
-    );
-    fetchItems();
-  };
-
-  const toggleFeatured = async (item) => {
-    await http.put(
-      `${API_BASE}/${item.id}`,
-      { isFeatured: !item.isFeatured },
-      { headers }
-    );
-    fetchItems();
-  };
-
-  // 🔥 CLEAN TOOLBAR (tidak terlalu ramai)
   const quillModules = {
     toolbar: [
       [{ header: [2, 3, false] }],
@@ -202,7 +192,6 @@ export default function AdminKegiatan() {
   return (
     <AdminLayout title="Kelola Event">
       <div className="admin-page admin-kegiatan-page">
-
         <div className="admin-toolbar">
           <div>
             <h2>Unified Event System</h2>
@@ -213,14 +202,18 @@ export default function AdminKegiatan() {
         </div>
 
         {(err || info) && (
-          <div className={`admin-kegiatan__notice ${err ? "admin-kegiatan__notice--error" : "admin-kegiatan__notice--success"}`}>
+          <div
+            className={`admin-kegiatan__notice ${
+              err
+                ? "admin-kegiatan__notice--error"
+                : "admin-kegiatan__notice--success"
+            }`}
+          >
             {err || info}
           </div>
         )}
 
         <div className="admin-kegiatan__grid">
-
-          {/* FORM */}
           <section className="admin-card admin-kegiatan__form-card">
             <div className="admin-card-header">
               <p className="admin-card-title">
@@ -230,23 +223,33 @@ export default function AdminKegiatan() {
 
             <div className="admin-card-body">
               <form className="admin-kegiatan__form" onSubmit={submit}>
-
                 <label>
                   Tipe
-                  <select value={form.type} onChange={(e) => onChange("type", e.target.value)}>
-                    {EVENT_TYPES.map((t) => <option key={t}>{t}</option>)}
+                  <select
+                    value={form.type}
+                    onChange={(e) => onChange("type", e.target.value)}
+                  >
+                    {EVENT_TYPES.map((t) => (
+                      <option key={t}>{t}</option>
+                    ))}
                   </select>
                 </label>
 
                 <label>
                   Judul
-                  <input value={form.title} onChange={(e) => onChange("title", e.target.value)} />
+                  <input
+                    value={form.title}
+                    onChange={(e) => onChange("title", e.target.value)}
+                  />
                 </label>
 
                 {form.type === "kajian" && (
                   <label>
                     Ustadz
-                    <input value={form.ustadz} onChange={(e) => onChange("ustadz", e.target.value)} />
+                    <input
+                      value={form.ustadz}
+                      onChange={(e) => onChange("ustadz", e.target.value)}
+                    />
                   </label>
                 )}
 
@@ -256,7 +259,6 @@ export default function AdminKegiatan() {
                   onChange={(url) => onChange("imageUrl", url)}
                 />
 
-                {/* 🔥 RICH TEXT EDITOR */}
                 <label>Deskripsi</label>
                 <ReactQuill
                   theme="snow"
@@ -268,42 +270,74 @@ export default function AdminKegiatan() {
                 <div className="admin-kegiatan__row">
                   <label>
                     Kategori
-                    <select value={form.category} onChange={(e) => onChange("category", e.target.value)}>
-                      {ACTIVITY_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                    <select
+                      value={form.category}
+                      onChange={(e) => onChange("category", e.target.value)}
+                    >
+                      {ACTIVITY_CATEGORIES.map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
                     </select>
                   </label>
 
                   <label>
                     Tanggal
-                    <input type="date" value={form.date} onChange={(e) => onChange("date", e.target.value)} />
+                    <input
+                      type="date"
+                      value={form.date}
+                      onChange={(e) => onChange("date", e.target.value)}
+                    />
                   </label>
                 </div>
 
                 <div className="admin-kegiatan__row">
                   <label>
                     Jam Mulai
-                    <input type="time" value={form.startTime} onChange={(e) => onChange("startTime", e.target.value)} />
+                    <input
+                      type="time"
+                      value={form.startTime}
+                      onChange={(e) => onChange("startTime", e.target.value)}
+                    />
                   </label>
 
                   <label>
                     Jam Selesai
-                    <input type="time" value={form.endTime} onChange={(e) => onChange("endTime", e.target.value)} />
+                    <input
+                      type="time"
+                      value={form.endTime}
+                      onChange={(e) => onChange("endTime", e.target.value)}
+                    />
                   </label>
                 </div>
 
                 <label>
                   Lokasi
-                  <input value={form.location} onChange={(e) => onChange("location", e.target.value)} />
+                  <input
+                    value={form.location}
+                    onChange={(e) => onChange("location", e.target.value)}
+                  />
                 </label>
 
                 <div className="admin-kegiatan__checklist">
                   <label className="admin-checkbox">
-                    <input type="checkbox" checked={form.isPublished} onChange={(e) => onCheckbox("isPublished", e.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={form.isPublished}
+                      onChange={(e) =>
+                        onCheckbox("isPublished", e.target.checked)
+                      }
+                    />
                     Publish
                   </label>
 
                   <label className="admin-checkbox">
-                    <input type="checkbox" checked={form.isFeatured} onChange={(e) => onCheckbox("isFeatured", e.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={form.isFeatured}
+                      onChange={(e) =>
+                        onCheckbox("isFeatured", e.target.checked)
+                      }
+                    />
                     Featured
                   </label>
                 </div>
@@ -311,18 +345,20 @@ export default function AdminKegiatan() {
                 <button className="admin-btn admin-btn-primary">
                   {saving ? "Menyimpan..." : editId ? "Update" : "Tambah"}
                 </button>
-
               </form>
             </div>
           </section>
 
-          {/* LIST tetap sama */}
           <section className="admin-card admin-kegiatan__list-card">
             <div className="admin-card-header admin-list-toolbar">
               <p className="admin-card-title">Daftar Event</p>
 
               <div className="admin-list-controls">
-                <input placeholder="Cari..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                <input
+                  placeholder="Cari..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
             </div>
 
@@ -330,11 +366,10 @@ export default function AdminKegiatan() {
               <ul className="admin-list">
                 {filteredItems.map((it) => (
                   <li key={it.id} className="admin-list-item">
-
                     <div className="admin-item-main">
                       {it.imageUrl && (
                         <div className="admin-item-thumb">
-                          <img src={it.imageUrl} alt="" />
+                          <img src={getImageUrl(it.imageUrl)} alt="" />
                         </div>
                       )}
 
@@ -358,16 +393,24 @@ export default function AdminKegiatan() {
                     </div>
 
                     <div className="admin-item-actions">
-                      <button className="admin-btn" onClick={() => startEdit(it)}>Edit</button>
-                      <button className="admin-btn admin-btn-danger" onClick={() => remove(it.id)}>Hapus</button>
+                      <button
+                        className="admin-btn"
+                        onClick={() => startEdit(it)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="admin-btn admin-btn-danger"
+                        onClick={() => remove(it.id)}
+                      >
+                        Hapus
+                      </button>
                     </div>
-
                   </li>
                 ))}
               </ul>
             </div>
           </section>
-
         </div>
       </div>
     </AdminLayout>
