@@ -5,7 +5,15 @@ import "../../styles/pages/Pengumuman.css";
 import http from "../../api/http";
 import { heroConfig } from "../../config/heroConfig";
 
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 const ORDERED_CATEGORIES = ["Semua", "Umum", "Layanan", "Lainnya"];
+
+function getImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
 
 export default function PengumumanPage() {
   const [announcements, setAnnouncements] = useState([]);
@@ -120,18 +128,22 @@ export default function PengumumanPage() {
             </div>
           ) : (
             <div className="pengumuman-grid">
-              {filteredAnnouncements.map((a) => (
-                <div key={a._id} className="pengumuman-grid__item">
-                  <AnnouncementCard
-                    id={a._id}
-                    img={a.imageUrl}
-                    title={a.title}
-                    date={a.date}
-                    desc={a.description || a.summary || ""}
-                    category={a.category || "Umum"}
-                  />
-                </div>
-              ))}
+              {filteredAnnouncements.map((a) => {
+                const id = a.id || a._id;
+
+                return (
+                  <div key={id} className="pengumuman-grid__item">
+                    <AnnouncementCard
+                      id={id}
+                      img={getImageUrl(a.imageUrl)}
+                      title={a.title}
+                      date={a.date}
+                      desc={a.description || a.summary || ""}
+                      category={a.category || "Umum"}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

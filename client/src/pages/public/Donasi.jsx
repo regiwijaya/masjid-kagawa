@@ -3,8 +3,16 @@ import "../../styles/pages/Donasi.css";
 import PageHero from "../../components/common/PageHero";
 import http from "../../api/http";
 import { heroConfig } from "../../config/heroConfig";
-
 import placeholder from "../../assets/images/placeholder.svg";
+
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
 
 export default function Donasi() {
   const [data, setData] = useState({
@@ -116,7 +124,6 @@ export default function Donasi() {
             <div className="donasi-state donasi-state--error">{error}</div>
           ) : (
             <>
-              {/* ================= BANK ================= */}
               <div className="donasi-grid">
                 {hasJapanBank && (
                   <section className="donasi-card">
@@ -197,7 +204,6 @@ export default function Donasi() {
                 )}
               </div>
 
-              {/* ================= QRIS ================= */}
               {hasQris && (
                 <section className="donasi-qris-section">
                   <div className="donasi-qris-card">
@@ -212,7 +218,7 @@ export default function Donasi() {
 
                     <div className="donasi-qris-media">
                       <img
-                        src={data.qrisImageUrl || placeholder}
+                        src={getImageUrl(data.qrisImageUrl)}
                         alt="QRIS Donasi"
                         className="donasi-qris-image"
                         onError={(e) => {
@@ -224,7 +230,6 @@ export default function Donasi() {
                 </section>
               )}
 
-              {/* ================= CTA ================= */}
               {(data.confirmationText || data.confirmationLink) && (
                 <section className="donasi-cta">
                   <div className="donasi-cta-card">

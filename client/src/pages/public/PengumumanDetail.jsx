@@ -5,6 +5,14 @@ import http from "../../api/http";
 import placeholder from "../../assets/images/placeholder.svg";
 
 const API_BASE = "/api/announcements";
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
 
 function formatDateLabel(dateString) {
   if (!dateString) return "-";
@@ -85,7 +93,7 @@ export default function PengumumanDetail() {
 
   if (!announcement) return null;
 
-  const poster = announcement.imageUrl || placeholder;
+  const poster = getImageUrl(announcement.imageUrl);
   const title = announcement.title || "Pengumuman";
   const dateText = formatDateLabel(announcement.date);
   const category = announcement.category || "Pengumuman";

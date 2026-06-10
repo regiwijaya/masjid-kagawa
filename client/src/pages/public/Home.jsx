@@ -1,13 +1,11 @@
+import { useEffect, useMemo, useState } from "react";
 import Hero from "../../components/hero/Hero";
 import Navbar from "../../components/common/Navbar";
-
 import PrayerTimesCard from "../../components/cards/PrayerTimesCard";
 import AnnouncementCarousel from "../../components/carousel/AnnouncementCarousel";
 import HomeHighlights from "../../components/common/HomeHighlights";
-
+import http from "../../api/http";
 import "../../styles/pages/MasjidPages.css";
-
-import { useEffect, useMemo, useState } from "react";
 
 export default function Home() {
   const [jadwalApi, setJadwalApi] = useState({
@@ -38,41 +36,42 @@ export default function Home() {
 
     async function loadPrayerTimes() {
       try {
-        const res = await fetch("/api/prayer", {
+        const res = await http.get("/api/prayer", {
           signal: controller.signal,
         });
-        const data = await res.json().catch(() => ({}));
 
-        if (res.ok) {
-          setJadwalApi({
-            subuh: data?.adzan?.subuh ?? "-",
-            zuhur: data?.adzan?.zuhur ?? "-",
-            asar: data?.adzan?.asar ?? "-",
-            maghrib: data?.adzan?.maghrib ?? "-",
-            isya: data?.adzan?.isya ?? "-",
-            syuruq: data?.adzan?.syuruq ?? "-",
-          });
+        const data = res?.data || {};
 
-          setIqamahApi({
-            subuh: data?.iqamah?.subuh ?? "-",
-            zuhur: data?.iqamah?.zuhur ?? "-",
-            asar: data?.iqamah?.asar ?? "-",
-            maghrib: data?.iqamah?.maghrib ?? "-",
-            isya: data?.iqamah?.isya ?? "-",
-          });
+        setJadwalApi({
+          subuh: data?.adzan?.subuh ?? "-",
+          zuhur: data?.adzan?.zuhur ?? "-",
+          asar: data?.adzan?.asar ?? "-",
+          maghrib: data?.adzan?.maghrib ?? "-",
+          isya: data?.adzan?.isya ?? "-",
+          syuruq: data?.adzan?.syuruq ?? "-",
+        });
 
-          setPrayerMeta({
-            location: data?.location ?? "Masjid Kagawa",
-            date: data?.date ?? "",
-            timezone: data?.timezone ?? "Asia/Tokyo",
-          });
-        }
+        setIqamahApi({
+          subuh: data?.iqamah?.subuh ?? "-",
+          zuhur: data?.iqamah?.zuhur ?? "-",
+          asar: data?.iqamah?.asar ?? "-",
+          maghrib: data?.iqamah?.maghrib ?? "-",
+          isya: data?.iqamah?.isya ?? "-",
+        });
+
+        setPrayerMeta({
+          location: data?.location ?? "Masjid Kagawa",
+          date: data?.date ?? "",
+          timezone: data?.timezone ?? "Asia/Tokyo",
+        });
       } catch (err) {
+        if (err?.name === "CanceledError" || err?.name === "AbortError") return;
         console.error("Gagal memuat jadwal shalat:", err);
       }
     }
 
     loadPrayerTimes();
+
     return () => controller.abort();
   }, []);
 
@@ -90,21 +89,15 @@ export default function Home() {
 
   return (
     <>
-      {/* 🔥 HERO FULL */}
       <Hero />
-
-      {/* 🔥 NAVBAR DI BAWAH HERO */}
       <Navbar />
 
-      {/* 🔥 CONTENT */}
       <section className="home-section home-prayer-section home-prayer-section--simple">
         <div className="home-shell">
           <div className="home-prayer-simple">
             <div className="home-prayer-simple__head">
               <div className="home-prayer-simple__title-wrap">
-                <h2 className="home-prayer-simple__title">
-                  Jadwal Shalat
-                </h2>
+                <h2 className="home-prayer-simple__title">Jadwal Shalat</h2>
 
                 <div className="home-prayer-simple__meta">
                   <span>{prayerMeta.location}</span>
@@ -112,17 +105,14 @@ export default function Home() {
                 </div>
               </div>
 
-              <a
-                href="/jadwal"
-                className="home-inline-link home-inline-link--soft"
-              >
+              <a href="/jadwal" className="home-inline-link home-inline-link--soft">
                 Lihat Jadwal Lengkap
               </a>
             </div>
 
             <div className="home-prayer-simple__grid">
-              {prayerTimes.map((p, i) => (
-                <div className="home-prayer-simple__item" key={i}>
+              {prayerTimes.map((p) => (
+                <div className="home-prayer-simple__item" key={p.name}>
                   <PrayerTimesCard
                     name={p.name}
                     time={p.time}

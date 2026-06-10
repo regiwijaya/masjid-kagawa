@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import "../../styles/pages/MasjidPages.css";
 import http from "../../api/http";
 import placeholder from "../../assets/images/placeholder.svg";
 
-// =========================
-// FORMAT DATE
-// =========================
+const API_BASE = "/api/activities";
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 function formatDateLabel(dateString) {
   if (!dateString) return "-";
 
@@ -21,26 +28,13 @@ function formatDateLabel(dateString) {
   }).format(date);
 }
 
-// =========================
-// COMPONENT
-// =========================
 export default function EventDetail() {
   const { id } = useParams();
-  const location = useLocation(); // 🔥 FIX: HARUS DI ATAS
-
-  // DEBUG (aman sekarang)
-  console.log("PARAM ID:", id);
-  console.log("FULL PATH:", location.pathname);
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
-  const API_BASE = "/api/activities";
-
-  // =========================
-  // FETCH DATA
-  // =========================
   useEffect(() => {
     let alive = true;
 
@@ -50,8 +44,6 @@ export default function EventDetail() {
         setErr("");
 
         const res = await http.get(`${API_BASE}/${id}`);
-
-        console.log("DATA FROM API:", res.data);
 
         if (!alive) return;
         setData(res.data);
@@ -74,9 +66,6 @@ export default function EventDetail() {
     };
   }, [id]);
 
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
     return (
       <section className="detail-page-section">
@@ -89,9 +78,6 @@ export default function EventDetail() {
     );
   }
 
-  // =========================
-  // ERROR
-  // =========================
   if (err) {
     return (
       <section className="detail-page-section">
@@ -108,15 +94,12 @@ export default function EventDetail() {
     );
   }
 
-  // =========================
-  // EMPTY DATA (ANTI BLANK)
-  // =========================
   if (!data) {
     return (
       <section className="detail-page-section">
         <div className="site-shell">
           <div className="detail-state-card">
-            <p>Data kosong (debug)</p>
+            <p>Data kosong.</p>
 
             <Link to="/kegiatan" className="detail-back-link">
               ← Kembali
@@ -127,10 +110,7 @@ export default function EventDetail() {
     );
   }
 
-  // =========================
-  // NORMALIZE DATA (SAFE)
-  // =========================
-  const poster = data?.imageUrl || placeholder;
+  const poster = getImageUrl(data?.imageUrl);
   const title = data?.title || "Event";
   const category = data?.category || "Kegiatan";
   const dateText = formatDateLabel(data?.date);
@@ -143,24 +123,17 @@ export default function EventDetail() {
       : "");
 
   const locationText = data?.location || "";
-  const desc =
-    data?.description || "Informasi detail akan segera diperbarui.";
+  const desc = data?.description || "Informasi detail akan segera diperbarui.";
 
-  // =========================
-  // RENDER
-  // =========================
   return (
     <section className="detail-page-section">
       <div className="site-shell">
         <div className="detail-page-wrap">
-
           <Link to="/kegiatan" className="detail-back-link">
             ← Kembali
           </Link>
 
           <article className="detail-article-card">
-
-            {/* IMAGE */}
             <div className="detail-media-wrap">
               <img
                 src={poster}
@@ -172,43 +145,42 @@ export default function EventDetail() {
               />
             </div>
 
-            {/* CONTENT */}
             <div className="detail-article-body">
-
               <div className="detail-meta-row">
                 <span className="detail-badge">{category}</span>
-                {dateText && (
-                  <span className="detail-date">{dateText}</span>
-                )}
+                {dateText && <span className="detail-date">{dateText}</span>}
               </div>
 
               <h1 className="detail-title">{title}</h1>
 
               {(ustadz || time || locationText) && (
                 <div className="detail-info-box">
-
                   {ustadz && (
-                    <p><strong>Ustadz:</strong> {ustadz}</p>
+                    <p>
+                      <strong>Ustadz:</strong> {ustadz}
+                    </p>
                   )}
 
                   {time && (
-                    <p><strong>Waktu:</strong> {time}</p>
+                    <p>
+                      <strong>Waktu:</strong> {time}
+                    </p>
                   )}
 
                   {locationText && (
-                    <p><strong>Tempat:</strong> {locationText}</p>
+                    <p>
+                      <strong>Tempat:</strong> {locationText}
+                    </p>
                   )}
-
                 </div>
               )}
 
               <div className="detail-divider"></div>
 
-<div
-  className="detail-content"
-  dangerouslySetInnerHTML={{ __html: desc }}
-/>
-
+              <div
+                className="detail-content"
+                dangerouslySetInnerHTML={{ __html: desc }}
+              />
             </div>
           </article>
         </div>
