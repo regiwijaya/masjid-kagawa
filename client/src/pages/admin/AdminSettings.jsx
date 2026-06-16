@@ -6,6 +6,8 @@ import "../../styles/admin/AdminSettings.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
 const DEFAULT_LEADERS = [
   { role: "Ketua", name: "", imageUrl: "", note: "" },
   { role: "Imam", name: "", imageUrl: "", note: "" },
@@ -37,17 +39,23 @@ const EMPTY_FORM = {
   leaders: DEFAULT_LEADERS,
 };
 
-function getAdminToken() {
-  return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
-}
-
 const tabs = [
   { key: "page", label: "Halaman" },
   { key: "contact", label: "Kontak & Sosial" },
   { key: "leaders", label: "Pengurus" },
 ];
 
-// 🔥 IMAGE UPLOAD HANDLER
+function getAdminToken() {
+  return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
+}
+
+function getImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 const imageHandler = async function () {
   const input = document.createElement("input");
   input.setAttribute("type", "file");
@@ -55,31 +63,32 @@ const imageHandler = async function () {
   input.click();
 
   input.onchange = async () => {
-    const file = input.files[0];
+    const file = input.files?.[0];
+    if (!file) return;
 
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const res = await http.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const token = getAdminToken();
+
+      const res = await http.post("/api/uploads/about", formData, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      const imageUrl = res.data.url;
+      const imageUrl = getImageUrl(res.data.imageUrl || res.data.url);
 
       const quill = this.quill;
-      const range = quill.getSelection();
+      const range = quill.getSelection(true);
 
       quill.insertEmbed(range.index, "image", imageUrl);
     } catch (err) {
       console.error("Upload gagal:", err);
+      alert("Upload gambar gagal");
     }
   };
 };
 
-// 🔥 QUILL CONFIG
 const quillModules = {
   toolbar: {
     container: [
@@ -115,6 +124,7 @@ export default function AdminSettings() {
 
       const res = await http.get("/api/about-settings");
       const data = res?.data || {};
+
       const leaders =
         Array.isArray(data.leaders) && data.leaders.length > 0
           ? data.leaders
@@ -122,7 +132,8 @@ export default function AdminSettings() {
 
       setForm({
         heroTitle: data.heroTitle || "Tentang Masjid Kagawa",
-        heroSubtitle: data.heroSubtitle || "Sejarah • Visi Misi • Struktur Pengurus",
+        heroSubtitle:
+          data.heroSubtitle || "Sejarah • Visi Misi • Struktur Pengurus",
         heroImageUrl: data.heroImageUrl || "",
 
         historyTitle: data.historyTitle || "Sejarah Masjid",
@@ -227,11 +238,11 @@ export default function AdminSettings() {
         imamDuty: form.imamDuty.trim(),
         muadzinDuty: form.muadzinDuty.trim(),
 
-      social: {
-        facebook: form.socialFacebook || "",
-        instagram: form.socialInstagram || "",
-        youtube: form.socialYoutube || "",
-              },
+        social: {
+          facebook: form.socialFacebook.trim(),
+          instagram: form.socialInstagram.trim(),
+          youtube: form.socialYoutube.trim(),
+        },
 
         leaders: form.leaders
           .map((item) => ({
@@ -262,7 +273,8 @@ export default function AdminSettings() {
             <p className="admin-settings-eyebrow">Website Settings</p>
             <h2>Tentang Masjid</h2>
             <p>
-              Kelola identitas halaman, kontak, sosial media, peta, footer, dan struktur pengurus.
+              Kelola identitas halaman, kontak, sosial media, peta, footer, dan
+              struktur pengurus.
             </p>
           </div>
 
@@ -279,7 +291,9 @@ export default function AdminSettings() {
         {(err || info) && (
           <div
             className={`admin-settings__notice ${
-              err ? "admin-settings__notice--error" : "admin-settings__notice--success"
+              err
+                ? "admin-settings__notice--error"
+                : "admin-settings__notice--success"
             }`}
           >
             {err || info}
@@ -321,7 +335,9 @@ export default function AdminSettings() {
                         Judul Hero
                         <input
                           value={form.heroTitle}
-                          onChange={(e) => onChange("heroTitle", e.target.value)}
+                          onChange={(e) =>
+                            onChange("heroTitle", e.target.value)
+                          }
                         />
                       </label>
 
@@ -329,7 +345,9 @@ export default function AdminSettings() {
                         Subtitle Hero
                         <input
                           value={form.heroSubtitle}
-                          onChange={(e) => onChange("heroSubtitle", e.target.value)}
+                          onChange={(e) =>
+                            onChange("heroSubtitle", e.target.value)
+                          }
                         />
                       </label>
 
@@ -357,7 +375,9 @@ export default function AdminSettings() {
                         Judul Bagian
                         <input
                           value={form.historyTitle}
-                          onChange={(e) => onChange("historyTitle", e.target.value)}
+                          onChange={(e) =>
+                            onChange("historyTitle", e.target.value)
+                          }
                         />
                       </label>
 
@@ -368,16 +388,16 @@ export default function AdminSettings() {
                         onChange={(url) => onChange("historyImageUrl", url)}
                       />
 
-                     <label>
-  Teks Sejarah
-  <ReactQuill
-    theme="snow"
-    value={form.historyText}
-    onChange={(value) => onChange("historyText", value)}
-    modules={quillModules}
-    className="admin-quill"
-  />
-</label>
+                      <label>
+                        Teks Sejarah
+                        <ReactQuill
+                          theme="snow"
+                          value={form.historyText}
+                          onChange={(value) => onChange("historyText", value)}
+                          modules={quillModules}
+                          className="admin-quill"
+                        />
+                      </label>
                     </div>
                   </section>
 
@@ -397,7 +417,9 @@ export default function AdminSettings() {
                           Judul Visi
                           <input
                             value={form.visionTitle}
-                            onChange={(e) => onChange("visionTitle", e.target.value)}
+                            onChange={(e) =>
+                              onChange("visionTitle", e.target.value)
+                            }
                           />
                         </label>
 
@@ -405,7 +427,9 @@ export default function AdminSettings() {
                           Judul Misi
                           <input
                             value={form.missionTitle}
-                            onChange={(e) => onChange("missionTitle", e.target.value)}
+                            onChange={(e) =>
+                              onChange("missionTitle", e.target.value)
+                            }
                           />
                         </label>
                       </div>
@@ -415,7 +439,9 @@ export default function AdminSettings() {
                         <textarea
                           rows={4}
                           value={form.visionText}
-                          onChange={(e) => onChange("visionText", e.target.value)}
+                          onChange={(e) =>
+                            onChange("visionText", e.target.value)
+                          }
                         />
                       </label>
 
@@ -424,7 +450,9 @@ export default function AdminSettings() {
                         <textarea
                           rows={6}
                           value={form.missionItemsText}
-                          onChange={(e) => onChange("missionItemsText", e.target.value)}
+                          onChange={(e) =>
+                            onChange("missionItemsText", e.target.value)
+                          }
                           placeholder="Satu baris untuk satu poin misi"
                         />
                       </label>
@@ -450,7 +478,9 @@ export default function AdminSettings() {
                       <textarea
                         rows={4}
                         value={form.footerDescription}
-                        onChange={(e) => onChange("footerDescription", e.target.value)}
+                        onChange={(e) =>
+                          onChange("footerDescription", e.target.value)
+                        }
                       />
                     </label>
 
@@ -485,7 +515,9 @@ export default function AdminSettings() {
                         Instagram URL
                         <input
                           value={form.socialInstagram}
-                          onChange={(e) => onChange("socialInstagram", e.target.value)}
+                          onChange={(e) =>
+                            onChange("socialInstagram", e.target.value)
+                          }
                         />
                       </label>
                     </div>
@@ -495,7 +527,9 @@ export default function AdminSettings() {
                         Facebook URL
                         <input
                           value={form.socialFacebook}
-                          onChange={(e) => onChange("socialFacebook", e.target.value)}
+                          onChange={(e) =>
+                            onChange("socialFacebook", e.target.value)
+                          }
                         />
                       </label>
 
@@ -503,7 +537,9 @@ export default function AdminSettings() {
                         YouTube URL
                         <input
                           value={form.socialYoutube}
-                          onChange={(e) => onChange("socialYoutube", e.target.value)}
+                          onChange={(e) =>
+                            onChange("socialYoutube", e.target.value)
+                          }
                         />
                       </label>
                     </div>
@@ -513,7 +549,9 @@ export default function AdminSettings() {
                         Imam On-Duty
                         <input
                           value={form.imamDuty}
-                          onChange={(e) => onChange("imamDuty", e.target.value)}
+                          onChange={(e) =>
+                            onChange("imamDuty", e.target.value)
+                          }
                         />
                       </label>
 
@@ -521,7 +559,9 @@ export default function AdminSettings() {
                         Muadzin On-Duty
                         <input
                           value={form.muadzinDuty}
-                          onChange={(e) => onChange("muadzinDuty", e.target.value)}
+                          onChange={(e) =>
+                            onChange("muadzinDuty", e.target.value)
+                          }
                         />
                       </label>
                     </div>
@@ -531,7 +571,9 @@ export default function AdminSettings() {
                       <textarea
                         rows={3}
                         value={form.mapEmbedUrl}
-                        onChange={(e) => onChange("mapEmbedUrl", e.target.value)}
+                        onChange={(e) =>
+                          onChange("mapEmbedUrl", e.target.value)
+                        }
                         placeholder="https://www.google.com/maps/embed?pb=..."
                       />
                     </label>
@@ -543,7 +585,9 @@ export default function AdminSettings() {
                 <section className="admin-card">
                   <div className="admin-card-header admin-settings__leaders-header">
                     <div>
-                      <p className="admin-card-title">Struktur Pengurus / Tokoh</p>
+                      <p className="admin-card-title">
+                        Struktur Pengurus / Tokoh
+                      </p>
                       <p className="admin-card-subtitle">
                         Isi jabatan, nama, foto, dan catatan tambahan.
                       </p>
@@ -603,7 +647,9 @@ export default function AdminSettings() {
                           label="Foto Pengurus"
                           value={leader.imageUrl}
                           aspect={1 / 1}
-                          onChange={(url) => onLeaderChange(index, "imageUrl", url)}
+                          onChange={(url) =>
+                            onLeaderChange(index, "imageUrl", url)
+                          }
                         />
 
                         <label className="admin-settings__leader-note">
@@ -623,7 +669,12 @@ export default function AdminSettings() {
               )}
 
               <div className="admin-settings-savebar">
-                <span>{saving ? "Sedang menyimpan perubahan..." : "Perubahan akan disimpan ke halaman publik."}</span>
+                <span>
+                  {saving
+                    ? "Sedang menyimpan perubahan..."
+                    : "Perubahan akan disimpan ke halaman publik."}
+                </span>
+
                 <button
                   className="admin-btn admin-btn-primary"
                   type="submit"

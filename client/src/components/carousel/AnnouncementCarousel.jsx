@@ -3,6 +3,15 @@ import "../../styles/components/AnnouncementCarousel.css";
 import http from "../../api/http";
 import placeholder from "../../assets/images/placeholder.svg";
 
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 function getVisibleSlides(width) {
   if (width <= 640) return 1;
   if (width <= 900) return 2;
@@ -57,13 +66,10 @@ export default function AnnouncementCarousel() {
           http.get("/api/posts"),
         ]);
 
-        // =========================
-        // 🔥 ANNOUNCEMENT
-        // =========================
         const announcements =
           annRes.status === "fulfilled" && Array.isArray(annRes.value.data)
             ? annRes.value.data.map((item) => ({
-                id: `announcement-${item.id}`, // ✅ FIX
+                id: `announcement-${item.id}`,
                 title: item.title,
                 category: item.category || "Umum",
                 source: "Pengumuman",
@@ -76,13 +82,10 @@ export default function AnnouncementCarousel() {
               }))
             : [];
 
-        // =========================
-        // 🔥 KEGIATAN
-        // =========================
         const activities =
           actRes.status === "fulfilled" && Array.isArray(actRes.value.data)
             ? actRes.value.data.map((item) => ({
-                id: `activity-${item.id}`, // ✅ FIX
+                id: `activity-${item.id}`,
                 title: item.title,
                 category: item.category || "Kegiatan",
                 source: "Kegiatan",
@@ -91,17 +94,14 @@ export default function AnnouncementCarousel() {
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
                 isFeatured: !!item.isFeatured,
-                href: `/kegiatan/${item.id}`, // ✅ FIX
+                href: `/kegiatan/${item.id}`,
               }))
             : [];
 
-        // =========================
-        // 🔥 KAJIAN
-        // =========================
         const kajian =
           kajRes.status === "fulfilled" && Array.isArray(kajRes.value.data)
             ? kajRes.value.data.map((item) => ({
-                id: `kajian-${item.id}`, // ✅ FIX
+                id: `kajian-${item.id}`,
                 title: item.title,
                 category: item.category || "Kajian",
                 source: "Kajian",
@@ -110,13 +110,10 @@ export default function AnnouncementCarousel() {
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
                 isFeatured: !!item.isFeatured,
-                href: `/kegiatan/${item.id}`, // 🔥 samakan ke detail page
+                href: `/kegiatan/${item.id}`,
               }))
             : [];
 
-        // =========================
-        // 🔥 ARTIKEL
-        // =========================
         const posts =
           postRes.status === "fulfilled" && Array.isArray(postRes.value.data)
             ? postRes.value.data
@@ -131,16 +128,11 @@ export default function AnnouncementCarousel() {
                   createdAt: item.createdAt,
                   updatedAt: item.updatedAt,
                   isFeatured: true,
-                  href: `/artikel/${item.slug || item.id}`, // fallback aman
+                  href: `/artikel/${item.slug || item.id}`,
                 }))
             : [];
 
-        const merged = [
-          ...announcements,
-          ...activities,
-          ...kajian,
-          ...posts,
-        ]
+        const merged = [...announcements, ...activities, ...kajian, ...posts]
           .sort((a, b) => {
             if (a.isFeatured !== b.isFeatured) {
               return Number(b.isFeatured) - Number(a.isFeatured);
@@ -148,6 +140,7 @@ export default function AnnouncementCarousel() {
 
             const aTime = new Date(a.date || a.createdAt || 0).getTime() || 0;
             const bTime = new Date(b.date || b.createdAt || 0).getTime() || 0;
+
             return bTime - aTime;
           })
           .slice(0, 10);
@@ -228,10 +221,19 @@ export default function AnnouncementCarousel() {
         </div>
 
         <div className="announcement-strip__nav">
-          <button className="announcement-strip__nav-btn" onClick={prevSlide}>
+          <button
+            type="button"
+            className="announcement-strip__nav-btn"
+            onClick={prevSlide}
+          >
             <i className="bi bi-chevron-left"></i>
           </button>
-          <button className="announcement-strip__nav-btn" onClick={nextSlide}>
+
+          <button
+            type="button"
+            className="announcement-strip__nav-btn"
+            onClick={nextSlide}
+          >
             <i className="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -255,7 +257,7 @@ export default function AnnouncementCarousel() {
               <a href={item.href} className="announcement-strip__card">
                 <div className="announcement-strip__image-wrap">
                   <img
-                    src={item.imageUrl || placeholder}
+                    src={getImageUrl(item.imageUrl)}
                     alt={item.title}
                     onError={handleImgError}
                   />
@@ -265,9 +267,7 @@ export default function AnnouncementCarousel() {
                   </span>
 
                   {isNewItem(item) && (
-                    <span className="announcement-strip__new-badge">
-                      NEW
-                    </span>
+                    <span className="announcement-strip__new-badge">NEW</span>
                   )}
                 </div>
 
@@ -276,6 +276,7 @@ export default function AnnouncementCarousel() {
                     <span className="announcement-strip__category">
                       {item.category}
                     </span>
+
                     <span className="announcement-strip__date">
                       {formatDate(item.date)}
                     </span>
