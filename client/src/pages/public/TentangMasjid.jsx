@@ -7,6 +7,7 @@ import { heroConfig } from "../../config/heroConfig";
 import sejarahFallback from "../../assets/images/masjid.jpeg";
 import personFallback from "../../assets/images/placeholder.svg";
 
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 const YOUTUBE_EMBED_URL = "https://www.youtube.com/embed/fU9AQ7EmCIA";
 
 const EMPTY_DATA = {
@@ -22,6 +23,21 @@ const EMPTY_DATA = {
   missionItems: [],
   leaders: [],
 };
+
+function getImageUrl(url) {
+  if (!url || typeof url !== "string") return "";
+  const cleanUrl = url.trim();
+
+  if (!cleanUrl) return "";
+  if (cleanUrl.startsWith("http://") || cleanUrl.startsWith("https://")) {
+    return cleanUrl;
+  }
+  if (cleanUrl.startsWith("/")) {
+    return `${BACKEND_BASE_URL}${cleanUrl}`;
+  }
+
+  return `${BACKEND_BASE_URL}/${cleanUrl}`;
+}
 
 function normalizeText(value = "") {
   return String(value).toLowerCase();
@@ -79,11 +95,13 @@ function groupLeaders(leaders) {
 }
 
 function LeaderCard({ leader }) {
+  const imageUrl = getImageUrl(leader.imageUrl) || personFallback;
+
   return (
     <article className="tentang-leader-card">
       <div className="tentang-leader-card__media">
         <img
-          src={leader.imageUrl || personFallback}
+          src={imageUrl}
           alt={leader.name || leader.role || "Pengurus"}
           className="tentang-leader-card__image"
           onError={(e) => {
@@ -189,10 +207,13 @@ export default function TentangMasjid() {
 
   const leaderGroups = useMemo(() => groupLeaders(leaders), [leaders]);
 
+  const heroImage = getImageUrl(data.heroImageUrl) || hero.image;
+  const historyImage = getImageUrl(data.historyImageUrl) || sejarahFallback;
+
   return (
     <div className="tentang-page">
       <PageHero
-        backgroundImage={data.heroImageUrl || hero.image}
+        backgroundImage={heroImage}
         overlay={hero.overlay}
         eyebrow={hero.eyebrow}
         title={data.heroTitle || hero.title}
@@ -216,7 +237,7 @@ export default function TentangMasjid() {
                 <div className="tentang-history">
                   <div className="tentang-history__media">
                     <img
-                      src={data.historyImageUrl || sejarahFallback}
+                      src={historyImage}
                       alt={data.historyTitle}
                       className="tentang-history__image"
                       onError={(e) => {
@@ -225,16 +246,16 @@ export default function TentangMasjid() {
                     />
                   </div>
 
-<div className="tentang-history__content">
-  {data.historyText ? (
-    <div
-      className="tentang-richtext"
-      dangerouslySetInnerHTML={{ __html: data.historyText }}
-    />
-  ) : (
-    <p>Informasi sejarah masjid belum diisi.</p>
-  )}
-</div>
+                  <div className="tentang-history__content">
+                    {data.historyText ? (
+                      <div
+                        className="tentang-richtext"
+                        dangerouslySetInnerHTML={{ __html: data.historyText }}
+                      />
+                    ) : (
+                      <p>Informasi sejarah masjid belum diisi.</p>
+                    )}
+                  </div>
                 </div>
               </section>
 

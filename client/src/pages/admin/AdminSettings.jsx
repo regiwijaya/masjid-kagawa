@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import http from "../../api/http";
@@ -49,11 +49,29 @@ function getAdminToken() {
   return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
 }
 
+function toText(value) {
+  if (typeof value === "string") return value;
+  if (value?.imageUrl && typeof value.imageUrl === "string") return value.imageUrl;
+  if (value?.url && typeof value.url === "string") return value.url;
+  return "";
+}
+
 function getImageUrl(url) {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
-  return `${BACKEND_BASE_URL}/${url}`;
+  const cleanUrl = toText(url).trim();
+
+  if (!cleanUrl) return "";
+  if (cleanUrl.startsWith("http://") || cleanUrl.startsWith("https://")) {
+    return cleanUrl;
+  }
+  if (cleanUrl.startsWith("/")) {
+    return `${BACKEND_BASE_URL}${cleanUrl}`;
+  }
+
+  return `${BACKEND_BASE_URL}/${cleanUrl}`;
+}
+
+function getRawImageUrl(value) {
+  return toText(value).trim();
 }
 
 const imageHandler = async function () {
@@ -76,14 +94,14 @@ const imageHandler = async function () {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      const imageUrl = getImageUrl(res.data.imageUrl || res.data.url);
+      const imageUrl = getImageUrl(res.data?.imageUrl || res.data?.url);
 
       const quill = this.quill;
       const range = quill.getSelection(true);
 
       quill.insertEmbed(range.index, "image", imageUrl);
     } catch (err) {
-      console.error("Upload gagal:", err);
+      console.error("Upload gambar editor gagal:", err);
       alert("Upload gambar gagal");
     }
   };
@@ -112,15 +130,11 @@ export default function AdminSettings() {
   const [err, setErr] = useState("");
   const [info, setInfo] = useState("");
 
-  const headers = useMemo(() => {
-    const token = getAdminToken();
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }, []);
-
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setErr("");
+      setInfo("");
 
       const res = await http.get("/api/about-settings");
       const data = res?.data || {};
@@ -160,14 +174,14 @@ export default function AdminSettings() {
         socialYoutube: data?.social?.youtube || "",
 
         leaders: leaders.map((item) => ({
-          role: item.role || "",
-          name: item.name || "",
-          imageUrl: item.imageUrl || "",
-          note: item.note || "",
+          role: item?.role || "",
+          name: item?.name || "",
+          imageUrl: item?.imageUrl || "",
+          note: item?.note || "",
         })),
       });
     } catch (e) {
-      console.error(e);
+      console.error("LOAD ABOUT SETTINGS ERROR:", e);
       setErr("Gagal memuat pengaturan Tentang Masjid.");
     } finally {
       setLoading(false);
@@ -212,14 +226,21 @@ export default function AdminSettings() {
       setErr("");
       setInfo("");
 
+      const token = getAdminToken();
+
+      if (!token) {
+        setErr("Token admin tidak ditemukan. Silakan login ulang.");
+        return;
+      }
+
       const payload = {
         heroTitle: form.heroTitle.trim(),
         heroSubtitle: form.heroSubtitle.trim(),
-        heroImageUrl: form.heroImageUrl.trim(),
+        heroImageUrl: getRawImageUrl(form.heroImageUrl),
 
         historyTitle: form.historyTitle.trim(),
         historyText: form.historyText.trim(),
-        historyImageUrl: form.historyImageUrl.trim(),
+        historyImageUrl: getRawImageUrl(form.historyImageUrl),
 
         visionTitle: form.visionTitle.trim(),
         visionText: form.visionText.trim(),
@@ -246,19 +267,24 @@ export default function AdminSettings() {
 
         leaders: form.leaders
           .map((item) => ({
-            role: item.role.trim(),
-            name: item.name.trim(),
-            imageUrl: item.imageUrl.trim(),
-            note: item.note.trim(),
+            role: toText(item.role).trim(),
+            name: toText(item.name).trim(),
+            imageUrl: getRawImageUrl(item.imageUrl),
+            note: toText(item.note).trim(),
           }))
           .filter((item) => item.role || item.name || item.imageUrl || item.note),
       };
 
-      await http.put("/api/about-settings", payload, { headers });
+      await http.put("/api/about-settings", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       setInfo("Pengaturan Tentang Masjid berhasil diperbarui.");
       await loadData();
     } catch (e) {
-      console.error(e);
+      console.error("SAVE ABOUT SETTINGS ERROR:", e);
       setErr(e?.response?.data?.msg || "Gagal menyimpan pengaturan.");
     } finally {
       setSaving(false);
