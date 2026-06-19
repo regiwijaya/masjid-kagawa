@@ -55,7 +55,9 @@ function normalizeImageUrl(imageUrl) {
   if (!imageUrl) return "";
   if (imageUrl.startsWith("http")) return imageUrl;
 
-  return `https://api.masjidkagawa.com${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  return `https://api.masjidkagawa.com${
+    imageUrl.startsWith("/") ? "" : "/"
+  }${imageUrl}`;
 }
 
 export default function AdminImageUploader({
@@ -111,7 +113,6 @@ export default function AdminImageUploader({
     };
 
     reader.readAsDataURL(file);
-
     e.target.value = "";
   };
 
@@ -130,11 +131,7 @@ export default function AdminImageUploader({
       const formData = new FormData();
       formData.append("image", blob, "cropped.jpg");
 
-      const res = await http.post(`/api/uploads/${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${getAdminToken()}`,
-        },
-      });
+      const res = await http.post(`/api/uploads/${type}`, formData);
 
       const data = res.data;
 
