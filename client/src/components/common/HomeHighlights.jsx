@@ -96,7 +96,7 @@ export default function HomeHighlights() {
                 type: "Artikel",
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
-                href: `/artikel/${item.id}`,
+                href: `/artikel/${item.slug}`,
               }))
             : [];
 
