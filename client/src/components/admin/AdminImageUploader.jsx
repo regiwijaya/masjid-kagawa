@@ -13,17 +13,14 @@ function getAdminToken() {
 function createImage(url) {
   return new Promise((resolve, reject) => {
     const image = new Image();
-
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error("Gagal memuat gambar untuk crop."));
-
     image.src = url;
   });
 }
 
 async function getCroppedImageBlob(imageSrc, croppedAreaPixels) {
   const image = await createImage(imageSrc);
-
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
@@ -111,14 +108,7 @@ export default function AdminImageUploader({
     const reader = new FileReader();
 
     reader.onload = () => {
-      const result = String(reader.result || "");
-
-      if (!result) {
-        setMessage("Gagal membaca file gambar.");
-        return;
-      }
-
-      setImageSrc(result);
+      setImageSrc(String(reader.result || ""));
     };
 
     reader.onerror = () => {
@@ -152,9 +142,11 @@ export default function AdminImageUploader({
       }
 
       const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels);
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
 
       const formData = new FormData();
-      formData.append("image", blob, "cropped.jpg");
+      formData.append("image", file);
+      formData.append("file", file);
 
       const res = await fetch(`${API_BASE_URL}/api/uploads/${type}`, {
         method: "POST",
