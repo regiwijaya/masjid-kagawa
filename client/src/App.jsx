@@ -33,6 +33,7 @@ import AdminPosts from "./pages/admin/AdminPosts";
 import AdminDonasi from "./pages/admin/AdminDonasi";
 import AdminContact from "./pages/admin/AdminContact";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminDonationConfirmations from "./pages/admin/AdminDonationConfirmations";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -89,6 +90,7 @@ function App() {
         <Route path="/admin/donasi" element={<AdminDonasi />} />
         <Route path="/admin/contact" element={<AdminContact />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route path="/admin/donation-confirmations" element={<AdminDonationConfirmations />} />
 
         {/* 404 */}
         <Route path="*" element={<Navigate to="/" replace />} />

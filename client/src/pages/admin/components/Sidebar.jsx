@@ -42,7 +42,12 @@ const menuItems = [
     label: "Donasi",
   },
   {
-    to: "/admin/contact", // ✅ TAMBAHAN
+    to: "/admin/donation-confirmations",
+    icon: "🧾",
+    label: "Konfirmasi Donasi",
+  },
+  {
+    to: "/admin/contact",
     icon: "📩",
     label: "Pesan Masuk",
   },

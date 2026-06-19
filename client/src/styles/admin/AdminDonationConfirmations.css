@@ -1,0 +1,348 @@
+.admin-donation-confirm-page {
+  width: 100%;
+}
+
+.admin-donation-confirm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.admin-donation-confirm-header h2 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.admin-donation-confirm-header p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 600;
+}
+
+.admin-donation-confirm-search input,
+.admin-donation-confirm-filter select {
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 700;
+  min-width: 260px;
+  outline: none;
+}
+
+.admin-donation-confirm-notice {
+  margin-bottom: 18px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.admin-donation-confirm-notice--error {
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  background: rgba(220, 38, 38, 0.06);
+  color: #b91c1c;
+}
+
+.admin-donation-confirm-notice--success {
+  border: 1px solid rgba(22, 163, 74, 0.22);
+  background: rgba(22, 163, 74, 0.08);
+  color: #166534;
+}
+
+.admin-donation-confirm-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.admin-donation-confirm-summary div {
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.05);
+}
+
+.admin-donation-confirm-summary span {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.54);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-donation-confirm-summary strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+  color: #0f172a;
+}
+
+.admin-donation-confirm-filter {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.admin-donation-confirm-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-donation-confirm-empty {
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  border-radius: 18px;
+  padding: 28px;
+  text-align: center;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.admin-donation-confirm-card {
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.06);
+}
+
+.admin-donation-confirm-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.admin-donation-confirm-card-top strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.admin-donation-confirm-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.admin-donation-confirm-badges span {
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.badge-status.pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400e;
+}
+
+.badge-status.verified {
+  background: rgba(22, 163, 74, 0.12);
+  color: #166534;
+}
+
+.badge-status.rejected {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+
+.badge-currency,
+.badge-purpose {
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
+.admin-donation-confirm-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-donation-confirm-message {
+  margin: 14px 0 0;
+  color: rgba(15, 23, 42, 0.76);
+  line-height: 1.7;
+}
+
+.admin-donation-confirm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.54);
+  z-index: 9999;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+
+.admin-donation-confirm-modal-card {
+  width: min(920px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.24);
+}
+
+.admin-donation-confirm-modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.admin-donation-confirm-modal-head h3 {
+  margin: 0 0 5px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.admin-donation-confirm-modal-head p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 700;
+}
+
+.admin-donation-confirm-modal-head button {
+  border: 0;
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  padding: 8px 11px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.admin-donation-confirm-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-donation-confirm-detail-grid div,
+.admin-donation-confirm-detail-message,
+.admin-donation-confirm-proof {
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+  background: #fbfdfc;
+}
+
+.admin-donation-confirm-detail-grid span,
+.admin-donation-confirm-detail-message span,
+.admin-donation-confirm-proof span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.56);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-donation-confirm-detail-grid strong {
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.admin-donation-confirm-detail-message,
+.admin-donation-confirm-proof {
+  margin-top: 12px;
+}
+
+.admin-donation-confirm-detail-message p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.admin-donation-confirm-proof img {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  display: block;
+}
+
+.admin-donation-confirm-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.admin-donation-confirm-page .admin-btn {
+  border: 1px solid rgba(2, 6, 23, 0.12);
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-donation-confirm-page .admin-btn-primary {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.admin-donation-confirm-page .admin-btn-warning {
+  background: #f59e0b;
+  color: white;
+  border-color: #f59e0b;
+}
+
+.admin-donation-confirm-page .admin-btn-danger {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+@media (max-width: 800px) {
+  .admin-donation-confirm-header {
+    flex-direction: column;
+  }
+
+  .admin-donation-confirm-search input,
+  .admin-donation-confirm-filter select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-donation-confirm-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-donation-confirm-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-donation-confirm-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-donation-confirm-card-top {
+    flex-direction: column;
+  }
+
+  .admin-donation-confirm-modal {
+    padding: 12px;
+  }
+}
