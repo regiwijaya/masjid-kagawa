@@ -35,13 +35,6 @@ const DONATION_PURPOSES = [
   "Lainnya",
 ];
 
-function getImageUrl(url) {
-  if (!url) return placeholder;
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
-  return `${BACKEND_BASE_URL}/${url}`;
-}
-
 const EMPTY_FORM = {
   donorName: "",
   isAnonymous: false,
@@ -55,6 +48,13 @@ const EMPTY_FORM = {
   message: "",
   proofImage: null,
 };
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
 
 export default function Donasi() {
   const [data, setData] = useState({
