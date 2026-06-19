@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://masjidkagawa.com/</loc>
+    <priority>1.00</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/jadwal</loc>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/tentang</loc>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/donasi</loc>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/kegiatan</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/pengumuman</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/artikel</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://masjidkagawa.com/contact</loc>
+    <priority>0.70</priority>
+  </url>
+
+</urlset>

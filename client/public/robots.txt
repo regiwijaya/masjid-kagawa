@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/register
+Disallow: /admin/dashboard
+Disallow: /admin/prayer
+Disallow: /admin/kegiatan
+Disallow: /admin/pengumuman
+Disallow: /admin/posts
+Disallow: /admin/donasi
+Disallow: /admin/contact
+Disallow: /admin/settings
+Disallow: /admin/donation-confirmations
+
+Sitemap: https://masjidkagawa.com/sitemap.xml
