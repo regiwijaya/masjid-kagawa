@@ -76,12 +76,12 @@ export default function HomeKegiatan() {
         : items.filter((item) => item.category === filter);
 
     return filtered.slice(0, 8).map((item) => ({
-      id: item._id,
+      id: item.id,
       title: item.title,
       dateLabel: formatDate(item.date),
       category: item.category || "Kegiatan",
       isNew: isNewItem(item),
-      href: `/kegiatan/${item._id}`,
+      href: `/kegiatan/${item.id}`,
     }));
   }, [items, filter]);
 
