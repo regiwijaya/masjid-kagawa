@@ -47,7 +47,7 @@ export default function HomeHighlights() {
         const announcements =
           ann.status === "fulfilled"
             ? ann.value.data.map((item) => ({
-                id: `ann-${item._id}`,
+                id: `ann-${item.id}`,
                 title: item.title,
                 date: item.date,
                 category: item.category || "Umum",
@@ -61,21 +61,21 @@ export default function HomeHighlights() {
         const activities =
           act.status === "fulfilled"
             ? act.value.data.map((item) => ({
-                id: `act-${item._id}`,
+                id: `act-${item.id}`,
                 title: item.title,
                 date: item.date,
                 category: item.category || "Kegiatan",
                 type: "Kegiatan",
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
-                href: `/kegiatan/${item._id}`,
+                href: `/kegiatan/${item.id}`,
               }))
             : [];
 
         const kajian =
           kaj.status === "fulfilled"
             ? kaj.value.data.map((item) => ({
-                id: `kaj-${item._id}`,
+                id: `kaj-${item.id}`,
                 title: item.title,
                 date: item.date,
                 category: item.category || "Kajian",
@@ -96,7 +96,7 @@ export default function HomeHighlights() {
                 type: "Artikel",
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
-                href: `/artikel/${item.slug}`,
+                href: `/artikel/${item.id}`,
               }))
             : [];
 
