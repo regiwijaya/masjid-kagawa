@@ -1,5 +1,6 @@
 // client/src/pages/admin/forms/PrayerTimesForm.jsx
 import { useEffect, useState } from "react";
+import http from "../../../api/http";
 
 export default function PrayerTimesForm() {
   const [form, setForm] = useState({
@@ -15,36 +16,38 @@ export default function PrayerTimesForm() {
   const [msg, setMsg] = useState({ type: "", text: "" });
 
   useEffect(() => {
-    const controller = new AbortController();
-    loadCurrent(controller.signal);
-    return () => controller.abort();
+    loadCurrent();
   }, []);
 
-  async function loadCurrent(signal) {
+  function cleanTime(value) {
+    if (!value || value === "-") return "";
+    return String(value).trim();
+  }
+
+  function getAdminToken() {
+    return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
+  }
+
+  async function loadCurrent() {
     setLoading(true);
     setMsg({ type: "", text: "" });
 
     try {
-      const res = await fetch("/api/prayer", { signal });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setMsg({ type: "error", text: data?.error || "Gagal memuat jadwal." });
-        return;
-      }
+      const res = await http.get("/api/prayer");
+      const data = res?.data || {};
 
       setForm({
-        subuh: data?.subuh && data.subuh !== "-" ? data.subuh : "",
-        zuhur: data?.zuhur && data.zuhur !== "-" ? data.zuhur : "",
-        asar: data?.asar && data.asar !== "-" ? data.asar : "",
-        maghrib: data?.maghrib && data.maghrib !== "-" ? data.maghrib : "",
-        isya: data?.isya && data.isya !== "-" ? data.isya : "",
+        subuh: cleanTime(data?.iqamah?.subuh),
+        zuhur: cleanTime(data?.iqamah?.zuhur || data?.iqamah?.dzuhur),
+        asar: cleanTime(data?.iqamah?.asar),
+        maghrib: cleanTime(data?.iqamah?.maghrib),
+        isya: cleanTime(data?.iqamah?.isya),
       });
     } catch (err) {
-      if (err?.name === "AbortError") return;
+      console.error("LOAD PRAYER FORM ERROR:", err);
       setMsg({ type: "error", text: "Tidak dapat terhubung ke server." });
     } finally {
-      if (!signal?.aborted) setLoading(false);
+      setLoading(false);
     }
   }
 
@@ -57,7 +60,8 @@ export default function PrayerTimesForm() {
     setSaving(true);
     setMsg({ type: "", text: "" });
 
-    const token = localStorage.getItem("adminToken");
+    const token = getAdminToken();
+
     if (!token) {
       setSaving(false);
       window.location.href = "/admin/login";
@@ -65,28 +69,36 @@ export default function PrayerTimesForm() {
     }
 
     try {
-      const res = await fetch("/api/prayer", {
-        method: "POST",
+      const payload = {
+        subuh: form.subuh,
+        zuhur: form.zuhur,
+        dzuhur: form.zuhur,
+        asar: form.asar,
+        maghrib: form.maghrib,
+        isya: form.isya,
+      };
+
+      const res = await http.put("/api/prayer/iqamah", payload, {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // wajib untuk protectAdmin
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
       });
 
-      const data = await res.json().catch(() => ({}));
+      setMsg({
+        type: "success",
+        text: res?.data?.message || "Jam iqamah berhasil disimpan.",
+      });
 
-      if (!res.ok) {
-        setMsg({
-          type: "error",
-          text: data?.message || data?.error || "Gagal menyimpan jadwal.",
-        });
-        return;
-      }
-
-      setMsg({ type: "success", text: data?.message || "Berhasil disimpan." });
+      await loadCurrent();
     } catch (err) {
-      setMsg({ type: "error", text: "Tidak dapat terhubung ke server." });
+      console.error("SAVE PRAYER FORM ERROR:", err);
+      setMsg({
+        type: "error",
+        text:
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Gagal menyimpan jadwal.",
+      });
     } finally {
       setSaving(false);
     }
@@ -167,7 +179,9 @@ export default function PrayerTimesForm() {
 
         {msg.text && (
           <div
-            className={`admin-alert ${msg.type === "success" ? "success" : "error"}`}
+            className={`admin-alert ${
+              msg.type === "success" ? "success" : "error"
+            }`}
           >
             {msg.text}
           </div>

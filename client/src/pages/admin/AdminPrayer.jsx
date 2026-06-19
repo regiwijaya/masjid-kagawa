@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "./components/AdminLayout";
 import http from "../../api/http";
 import "../../styles/admin/AdminPrayer.css";
@@ -28,6 +28,11 @@ function getAdminToken() {
   return localStorage.getItem("adminToken") || localStorage.getItem("token") || "";
 }
 
+function cleanTime(value) {
+  if (!value || value === "-") return "";
+  return String(value).trim();
+}
+
 function formatDateLabel(dateString) {
   if (!dateString) return "Hari ini";
 
@@ -42,7 +47,7 @@ function formatDateLabel(dateString) {
   }).format(date);
 }
 
-export default function AdminDashboard() {
+export default function AdminPrayer() {
   const [data, setData] = useState(EMPTY_PRAYER);
   const [form, setForm] = useState({
     subuh: "",
@@ -55,11 +60,6 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
   const [info, setInfo] = useState("");
-
-  const headers = useMemo(() => {
-    const token = getAdminToken();
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }, []);
 
   const loadPrayerData = async () => {
     try {
@@ -76,24 +76,24 @@ export default function AdminDashboard() {
         adzan: {
           subuh: payload?.adzan?.subuh || "-",
           syuruq: payload?.adzan?.syuruq || "-",
-          zuhur: payload?.adzan?.zuhur || "-",
+          zuhur: payload?.adzan?.zuhur || payload?.adzan?.dzuhur || "-",
           asar: payload?.adzan?.asar || "-",
           maghrib: payload?.adzan?.maghrib || "-",
           isya: payload?.adzan?.isya || "-",
         },
         iqamah: {
-          subuh: payload?.iqamah?.subuh || "",
-          zuhur: payload?.iqamah?.zuhur || "",
-          asar: payload?.iqamah?.asar || "",
-          maghrib: payload?.iqamah?.maghrib || "",
-          isya: payload?.iqamah?.isya || "",
+          subuh: cleanTime(payload?.iqamah?.subuh),
+          zuhur: cleanTime(payload?.iqamah?.zuhur || payload?.iqamah?.dzuhur),
+          asar: cleanTime(payload?.iqamah?.asar),
+          maghrib: cleanTime(payload?.iqamah?.maghrib),
+          isya: cleanTime(payload?.iqamah?.isya),
         },
       };
 
       setData(nextData);
       setForm(nextData.iqamah);
     } catch (e) {
-      console.error(e);
+      console.error("LOAD PRAYER ERROR:", e);
       setErr("Gagal memuat data jadwal shalat.");
     } finally {
       setLoading(false);
@@ -116,22 +116,36 @@ export default function AdminDashboard() {
       setErr("");
       setInfo("");
 
+      const token = getAdminToken();
+
+      if (!token) {
+        setErr("Token admin tidak ditemukan. Silakan login ulang.");
+        window.location.href = "/admin/login";
+        return;
+      }
+
       const payload = {
         subuh: form.subuh,
         zuhur: form.zuhur,
+        dzuhur: form.zuhur,
         asar: form.asar,
         maghrib: form.maghrib,
         isya: form.isya,
       };
 
-      await http.put("/api/prayer/iqamah", payload, { headers });
+      await http.put("/api/prayer/iqamah", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setInfo("Jam iqamah berhasil diperbarui.");
       await loadPrayerData();
     } catch (e) {
-      console.error(e);
+      console.error("SAVE IQAMAH ERROR:", e);
       setErr(
         e?.response?.data?.message ||
+          e?.response?.data?.error ||
           "Gagal menyimpan jam iqamah. Pastikan login admin masih aktif."
       );
     } finally {
@@ -195,7 +209,9 @@ export default function AdminDashboard() {
         {(err || info) && (
           <div
             className={`admin-prayer__notice ${
-              err ? "admin-prayer__notice--error" : "admin-prayer__notice--success"
+              err
+                ? "admin-prayer__notice--error"
+                : "admin-prayer__notice--success"
             }`}
           >
             {err || info}
@@ -248,7 +264,7 @@ export default function AdminDashboard() {
                         <tr key={row.key}>
                           <td>{row.name}</td>
                           <td>{row.adzan}</td>
-                          <td>{row.locked ? "-" : data.iqamah[row.key] || "-"}</td>
+                          <td>{row.locked ? "-" : row.iqamah || "-"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -280,6 +296,7 @@ export default function AdminDashboard() {
                         type="time"
                         value={form.subuh}
                         onChange={(e) => onChange("subuh", e.target.value)}
+                        required
                       />
                     </label>
 
@@ -289,6 +306,7 @@ export default function AdminDashboard() {
                         type="time"
                         value={form.zuhur}
                         onChange={(e) => onChange("zuhur", e.target.value)}
+                        required
                       />
                     </label>
 
@@ -298,6 +316,7 @@ export default function AdminDashboard() {
                         type="time"
                         value={form.asar}
                         onChange={(e) => onChange("asar", e.target.value)}
+                        required
                       />
                     </label>
 
@@ -307,6 +326,7 @@ export default function AdminDashboard() {
                         type="time"
                         value={form.maghrib}
                         onChange={(e) => onChange("maghrib", e.target.value)}
+                        required
                       />
                     </label>
 
@@ -316,6 +336,7 @@ export default function AdminDashboard() {
                         type="time"
                         value={form.isya}
                         onChange={(e) => onChange("isya", e.target.value)}
+                        required
                       />
                     </label>
                   </div>
