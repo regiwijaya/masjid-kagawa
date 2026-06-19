@@ -6,9 +6,15 @@ import "../../styles/pages/ArtikelDetail.css";
 import placeholder from "../../assets/images/placeholder.svg";
 import DOMPurify from "dompurify";
 
-// =========================
-// FORMAT DATE
-// =========================
+const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
+
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/")) return `${BACKEND_BASE_URL}${url}`;
+  return `${BACKEND_BASE_URL}/${url}`;
+}
+
 function formatDate(dateString) {
   if (!dateString) return "-";
 
@@ -23,18 +29,18 @@ function formatDate(dateString) {
   }).format(date);
 }
 
-// =========================
-// FIX: DECODE HTML
-// =========================
 function decodeHtml(html = "") {
   const txt = document.createElement("textarea");
   txt.innerHTML = html;
   return txt.value;
 }
 
-// =========================
-// COMPONENT
-// =========================
+function normalizeHtmlImages(html = "") {
+  if (!html) return "";
+
+  return html.replace(/src="\/uploads\//g, `src="${BACKEND_BASE_URL}/uploads/`);
+}
+
 export default function ArtikelDetail() {
   const { slug } = useParams();
 
@@ -86,22 +92,14 @@ export default function ArtikelDetail() {
     };
   }, [slug]);
 
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
     return (
       <div className="artikel-detail-page">
-        <div className="artikel-detail-state">
-          Memuat artikel...
-        </div>
+        <div className="artikel-detail-state">Memuat artikel...</div>
       </div>
     );
   }
 
-  // =========================
-  // ERROR
-  // =========================
   if (error || !post) {
     return (
       <div className="artikel-detail-page">
@@ -118,29 +116,37 @@ export default function ArtikelDetail() {
     );
   }
 
-  // =========================
-  // FINAL HTML (DECODE + SANITIZE)
-  // =========================
-  const safeHtml = DOMPurify.sanitize(
-    decodeHtml(post.content || "<p>-</p>"),
-    {
-      ALLOWED_TAGS: [
-        "p", "b", "i", "strong", "em",
-        "h1", "h2", "h3",
-        "ul", "ol", "li",
-        "a", "img", "blockquote", "br"
-      ],
-      ALLOWED_ATTR: ["href", "src", "alt", "target"]
-    }
-  );
+  const heroImage = getImageUrl(post.imageUrl);
+  const articleImage = getImageUrl(post.imageUrl);
 
-  // =========================
-  // SUCCESS
-  // =========================
+  const decodedHtml = decodeHtml(post.content || "<p>-</p>");
+  const normalizedHtml = normalizeHtmlImages(decodedHtml);
+
+  const safeHtml = DOMPurify.sanitize(normalizedHtml, {
+    ALLOWED_TAGS: [
+      "p",
+      "b",
+      "i",
+      "strong",
+      "em",
+      "h1",
+      "h2",
+      "h3",
+      "ul",
+      "ol",
+      "li",
+      "a",
+      "img",
+      "blockquote",
+      "br",
+    ],
+    ALLOWED_ATTR: ["href", "src", "alt", "target"],
+  });
+
   return (
     <div className="artikel-detail-page">
       <PageHero
-        backgroundImage={post.imageUrl || placeholder}
+        backgroundImage={heroImage}
         eyebrow={post.category || "Artikel"}
         title={post.title || "Tanpa Judul"}
         subtitle={`${post.author || "Admin"} • ${formatDate(post.createdAt)}`}
@@ -149,13 +155,12 @@ export default function ArtikelDetail() {
       <section className="artikel-detail-content">
         <div className="site-shell">
           <article className="artikel-detail-article">
-
             <Link to="/artikel" className="artikel-detail-back">
               ← Kembali ke daftar artikel
             </Link>
 
             <img
-              src={post.imageUrl || placeholder}
+              src={articleImage}
               alt={post.title || "Artikel"}
               className="artikel-detail-image"
               onError={(e) => {
@@ -178,16 +183,13 @@ export default function ArtikelDetail() {
             </h1>
 
             {post.excerpt && (
-              <p className="artikel-detail-excerpt">
-                {post.excerpt}
-              </p>
+              <p className="artikel-detail-excerpt">{post.excerpt}</p>
             )}
 
             <div
               className="artikel-detail-body"
               dangerouslySetInnerHTML={{ __html: safeHtml }}
             />
-
           </article>
         </div>
       </section>
