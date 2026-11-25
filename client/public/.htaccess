@@ -8,3 +8,9 @@
 
   RewriteRule ^ index.html [L]
 </IfModule>
+# Revalidate the HTML entrypoint after deploys; hashed assets may remain cached.
+<IfModule mod_headers.c>
+  <FilesMatch "^index\.html$">
+    Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
