@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
-import ReactQuill from "react-quill";
+import RichTextEditor from "../../components/admin/RichTextEditor";
 import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import http from "../../api/http";
 import "../../styles/admin/AdminPosts.css";
-import "react-quill/dist/quill.snow.css";
 
 const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 
@@ -269,7 +268,7 @@ export default function AdminPosts() {
                 </div>
 
                 <div className="admin-posts-editor-wrap">
-                  <ReactQuill
+                  <RichTextEditor
                     ref={quillRef}
                     theme="snow"
                     value={form.content}

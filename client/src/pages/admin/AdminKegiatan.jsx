@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import RichTextEditor from "../../components/admin/RichTextEditor";
 
 import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
@@ -260,7 +259,7 @@ export default function AdminKegiatan() {
                 />
 
                 <label>Deskripsi</label>
-                <ReactQuill
+                <RichTextEditor
                   theme="snow"
                   value={form.description}
                   onChange={(value) => onChange("description", value)}

@@ -3,8 +3,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminImageUploader from "../../components/admin/AdminImageUploader";
 import http from "../../api/http";
 import "../../styles/admin/AdminSettings.css";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import RichTextEditor from "../../components/admin/RichTextEditor";
 
 const BACKEND_BASE_URL = "https://api.masjidkagawa.com";
 
@@ -416,7 +415,7 @@ export default function AdminSettings() {
 
                       <label>
                         Teks Sejarah
-                        <ReactQuill
+                        <RichTextEditor
                           theme="snow"
                           value={form.historyText}
                           onChange={(value) => onChange("historyText", value)}
